@@ -13,26 +13,26 @@ sudo bpftrace -e 'profile:hz:99 /pid == 23163/ { @[kstack(3)] = count(); } inter
 
 # bpftrace dla kernel stack
 ```shell
-sudo bpftrace -e 'profile:hz:99 /pid == 12216/ { @[kstack()] = count(); } interval:s:120 { exit(); }' > apache10.bpftrace &&
-./stackcollapse-bpftrace.pl apache10.bpftrace > apache10.folded && 
-./flamegraph.pl apache10.folded > apache10.bpftrace.svg
+sudo bpftrace -e 'profile:hz:99 /pid == 77060/ { @[kstack()] = count(); } interval:s:120 { exit(); }' > apache11_8t.bpftrace &&
+./stackcollapse-bpftrace.pl apache11_8t.bpftrace > apache11_8t.folded && 
+./flamegraph.pl apache11_8t.folded > apache11_8t.bpftrace.svg
 ```
 
 ```shell
-sudo bpftrace -e 'profile:hz:99 /pid == 12552/ { @[kstack()] = count(); } interval:s:120 { exit(); }' > netty10.bpftrace &&
-./stackcollapse-bpftrace.pl netty10.bpftrace > netty10.folded && 
-./flamegraph.pl netty10.folded > netty10.bpftrace.svg
+sudo bpftrace -e 'profile:hz:99 /pid == 77396/ { @[kstack()] = count(); } interval:s:120 { exit(); }' > netty11_8t.bpftrace &&
+./stackcollapse-bpftrace.pl netty11_8t.bpftrace > netty11_8t.folded && 
+./flamegraph.pl netty11_8t.folded > netty11_8t.bpftrace.svg
 ```
 
 
 # Async profiler
 
 ```shell
-./asprof -d 60 -f apache_12.html -e wall -t 6154
+./asprof -d 300 -f apache_12_200t_bez_walla.html 140482
 ```
 
 ```shell
-./asprof -d 60 -f netty_12.html -e wall -t 5831
+./asprof -d 300 -f netty_12_200t_bez_walla.html 140146
 ```
 
 

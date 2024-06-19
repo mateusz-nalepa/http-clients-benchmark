@@ -19,7 +19,9 @@ repositories {
 }
 
 dependencies {
+	implementation("io.micrometer:micrometer-registry-prometheus:1.13.1")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.0")
 //	implementation("org.springframework.boot:spring-boot-starter-undertow")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")

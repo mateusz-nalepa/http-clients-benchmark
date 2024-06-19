@@ -45,7 +45,7 @@ class ApacheWebClientFactory(
 //            .build()
 //
 //
-//    val build = HttpAsyncClients
+//    val client = HttpAsyncClients
 //        .custom()
 //        .setConnectionManager(connectionManager)
 //        .setThreadFactory(
@@ -126,7 +126,7 @@ class ApacheWebClientFactory(
                 )
                 .disableAutomaticRetries()
                 .build()
-
+//
         return HttpComponentsClientHttpConnector(client)
     }
 }

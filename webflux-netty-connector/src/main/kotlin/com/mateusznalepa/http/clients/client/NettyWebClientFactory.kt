@@ -6,6 +6,7 @@ import org.springframework.http.client.reactive.ClientHttpConnector
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.netty.http.client.HttpClient
 import reactor.netty.resources.ConnectionProvider
 import reactor.netty.resources.LoopResources
 import java.time.Duration
@@ -54,10 +55,12 @@ class NettyWebClientFactory(
 
         val reactorRequestFactory = ReactorResourceFactory().apply {
             connectionProvider = connectionProviderBuilder.build()
-            loopResources = LoopResources.create("http-loop-$number-")
+//            loopResources = loopResourcesXD
+            loopResources = LoopResources.create("http-loop-$number-pool-")
         }
 
-        val reactorClientHttpConnector = ReactorClientHttpConnector(reactorRequestFactory) { client ->
+
+        val clientCustomization: (t: HttpClient) -> HttpClient = { client ->
 
             client
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 500)
@@ -67,10 +70,23 @@ class NettyWebClientFactory(
                 .responseTimeout(Duration.ofMillis(500))
                 .followRedirect(false)
         }
+        return ReactorClientHttpConnector(reactorRequestFactory, clientCustomization)
 
-        return reactorClientHttpConnector
+//        val httpClient = clientCustomization.invoke(HttpClient.create(connectionProviderBuilder.build()))
+//        return ReactorClientHttpConnector(httpClient)
     }
 
     private val loopResourcesXD = LoopResources.create("http-loop-pool-")
 
+//    private val loopResourcesXD =
+//        LoopResources.create(
+//            "http-loop-pool-",
+//            LoopResources.DEFAULT_IO_SELECT_COUNT,
+//            LoopResources.DEFAULT_IO_WORKER_COUNT,
+//            true,
+//            true, // domyslnie na samego create jest TRUE
+//        )
+
+
+//    return reactor.netty.resources.DefaultLoopResources(prefix, reactor.netty.resources.LoopResources.DEFAULT_IO_SELECT_COUNT, reactor.netty.resources.LoopResources.DEFAULT_IO_WORKER_COUNT, true)
 }
