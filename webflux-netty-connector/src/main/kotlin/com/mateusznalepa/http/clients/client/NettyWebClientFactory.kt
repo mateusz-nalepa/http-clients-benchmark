@@ -56,8 +56,8 @@ class NettyWebClientFactory(
 
         val reactorRequestFactory = ReactorResourceFactory().apply {
             connectionProvider = connectionProviderBuilder.build()
-            loopResources = loopResourcesXD
-//            loopResources = LoopResources.create("http-loop-$number-pool-")
+//            loopResources = loopResourcesXD
+            loopResources = LoopResources.create("http-loop-$number-pool-")
         }
 
 
@@ -77,7 +77,7 @@ class NettyWebClientFactory(
 //        return ReactorClientHttpConnector(httpClient)
     }
 
-//    private val loopResourcesXD = LoopResources.create("http-loop-pool-")
+    private val loopResourcesXD = LoopResources.create("http-loop-pool-")
 
 //    private val loopResourcesXD =
 //        LoopResources.create(
@@ -88,13 +88,13 @@ class NettyWebClientFactory(
 //            true, // domyslnie na samego create jest TRUE
 //        )
 
-    private val loopResourcesXD =
-        XDDefaultLoopResources(
-            "http-loop-pool-",
-            LoopResources.DEFAULT_IO_SELECT_COUNT,
-            LoopResources.DEFAULT_IO_WORKER_COUNT,
-            true,
-        )
+//    private val loopResourcesXD =
+//        XDDefaultLoopResources(
+//            "http-loop-pool-",
+//            LoopResources.DEFAULT_IO_SELECT_COUNT,
+//            LoopResources.DEFAULT_IO_WORKER_COUNT,
+//            true,
+//        )
 
 
 //    return reactor.netty.resources.DefaultLoopResources(prefix, reactor.netty.resources.LoopResources.DEFAULT_IO_SELECT_COUNT, reactor.netty.resources.LoopResources.DEFAULT_IO_WORKER_COUNT, true)

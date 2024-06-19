@@ -19,6 +19,8 @@ repositories {
 }
 
 dependencies {
+//	runtimeOnly("org.aspectj:aspectjweaver:1.9.22.1")
+	runtimeOnly("org.aspectj:aspectjrt:1.9.22.1")
 	implementation("io.micrometer:micrometer-registry-prometheus:1.13.1")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.0")

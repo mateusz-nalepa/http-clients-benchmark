@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.FastThreadLocalThread;
 import io.netty.util.concurrent.Future;
@@ -142,16 +143,20 @@ public class XDDefaultLoopResources extends AtomicLong implements LoopResources 
     @Override
     public EventLoopGroup onClient(boolean useNative) {
         if (useNative && LoopResources.hasNativeSupport()) {
+//            System.out.println("onClient w srodku ifa");
             return cacheNativeClientLoops();
         }
+//        System.out.println("onClient w poza ifem");
         return cacheNioClientLoops();
     }
 
     @Override
     public EventLoopGroup onServer(boolean useNative) {
         if (useNative && LoopResources.hasNativeSupport()) {
+//            System.out.println("onServer w srodku ifa");
             return cacheNativeServerLoops();
         }
+//        System.out.println("onServer w poza ifem");
         return cacheNioServerLoops();
     }
 
@@ -178,11 +183,15 @@ public class XDDefaultLoopResources extends AtomicLong implements LoopResources 
         if (null == eventLoopGroup) {
             EventLoopGroup newEventLoopGroup = colocate ? LoopResources.colocate(cacheNioServerLoops()) :
                     cacheNioServerLoops();
+            setIoRatioIfPossible(newEventLoopGroup);
+
             if (!clientLoops.compareAndSet(null, newEventLoopGroup)) {
                 // Do not shutdown newEventLoopGroup as this will shutdown the server loops
             }
             eventLoopGroup = cacheNioClientLoops();
         }
+        setIoRatioIfPossible(eventLoopGroup);
+
         return eventLoopGroup;
     }
 
@@ -196,12 +205,16 @@ public class XDDefaultLoopResources extends AtomicLong implements LoopResources 
         if (null == eventLoopGroup) {
             EventLoopGroup newEventLoopGroup = new NioEventLoopGroup(selectCount,
                     threadFactory(this, "select-nio"));
+            setIoRatioIfPossible(newEventLoopGroup);
+
             if (!serverSelectLoops.compareAndSet(null, newEventLoopGroup)) {
                 //"FutureReturnValueIgnored" this is deliberate
                 newEventLoopGroup.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS);
             }
             eventLoopGroup = cacheNioSelectLoops();
         }
+        setIoRatioIfPossible(eventLoopGroup);
+
         return eventLoopGroup;
     }
 
@@ -211,12 +224,15 @@ public class XDDefaultLoopResources extends AtomicLong implements LoopResources 
         if (null == eventLoopGroup) {
             EventLoopGroup newEventLoopGroup = new NioEventLoopGroup(workerCount,
                     threadFactory(this, "nio"));
+            setIoRatioIfPossible(newEventLoopGroup);
+
             if (!serverLoops.compareAndSet(null, newEventLoopGroup)) {
                 //"FutureReturnValueIgnored" this is deliberate
                 newEventLoopGroup.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS);
             }
             eventLoopGroup = cacheNioServerLoops();
         }
+        setIoRatioIfPossible(eventLoopGroup);
         return eventLoopGroup;
     }
 
@@ -227,11 +243,14 @@ public class XDDefaultLoopResources extends AtomicLong implements LoopResources 
                     ? LoopResources.colocate(cacheNativeServerLoops())
                     : cacheNativeServerLoops();
 
+            setIoRatioIfPossible(newEventLoopGroup);
+
             if (!cacheNativeClientLoops.compareAndSet(null, newEventLoopGroup)) {
                 // Do not shutdown newEventLoopGroup as this will shutdown the server loops
             }
             eventLoopGroup = cacheNativeClientLoops();
         }
+        setIoRatioIfPossible(eventLoopGroup);
         return eventLoopGroup;
     }
 
@@ -247,12 +266,16 @@ public class XDDefaultLoopResources extends AtomicLong implements LoopResources 
             EventLoopGroup newEventLoopGroup = defaultLoop.newEventLoopGroup(
                     selectCount,
                     threadFactory(this, "select-" + defaultLoop.getName()));
+            setIoRatioIfPossible(newEventLoopGroup);
+
             if (!cacheNativeSelectLoops.compareAndSet(null, newEventLoopGroup)) {
                 //"FutureReturnValueIgnored" this is deliberate
                 newEventLoopGroup.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS);
             }
             eventLoopGroup = cacheNativeSelectLoops();
         }
+        setIoRatioIfPossible(eventLoopGroup);
+
         return eventLoopGroup;
     }
 
@@ -266,6 +289,7 @@ public class XDDefaultLoopResources extends AtomicLong implements LoopResources 
                     threadFactory(this, defaultLoop.getName()));
 
 
+            setIoRatioIfPossible(newEventLoopGroup);
 
             if (!cacheNativeServerLoops.compareAndSet(null, newEventLoopGroup)) {
                 //"FutureReturnValueIgnored" this is deliberate
@@ -273,7 +297,16 @@ public class XDDefaultLoopResources extends AtomicLong implements LoopResources 
             }
             eventLoopGroup = cacheNativeServerLoops();
         }
+        setIoRatioIfPossible(eventLoopGroup);
+
         return eventLoopGroup;
+    }
+
+    private void setIoRatioIfPossible(EventLoopGroup eventLoopGroup) {
+        if (eventLoopGroup instanceof EpollEventLoopGroup) {
+//            System.out.println("ustawiam ioRatio na 90");
+            ((EpollEventLoopGroup) eventLoopGroup).setIoRatio(5);
+        }
     }
 
     static ThreadFactory threadFactory(XDDefaultLoopResources parent, String prefix) {

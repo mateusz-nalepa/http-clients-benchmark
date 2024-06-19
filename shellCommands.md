@@ -28,7 +28,7 @@ sudo bpftrace -e 'profile:hz:99 /pid == 77396/ { @[kstack()] = count(); } interv
 # Async profiler
 
 ```shell
-./asprof -d 300 -f apache_12_200t_bez_walla.html 140482
+./asprof -d 1200 -f apache_14_200t_z_wallem.html -e wall -t 171269
 ```
 
 ```shell

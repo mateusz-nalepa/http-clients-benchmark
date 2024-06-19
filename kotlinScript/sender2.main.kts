@@ -57,9 +57,9 @@ object ScriptLogger {
 
 object ScriptParameters {
 
-    const val sourceDirectoryWithFiles = "source2"
-    const val batchSize = 20
-    const val appUrl = "http://localhost:8082"
+    const val sourceDirectoryWithFiles = "source1"
+    const val batchSize = 30
+    const val appUrl = "http://localhost:8083"
 
     private val objectMapper: ObjectMapper = ObjectMapper().findAndRegisterModules()
 
