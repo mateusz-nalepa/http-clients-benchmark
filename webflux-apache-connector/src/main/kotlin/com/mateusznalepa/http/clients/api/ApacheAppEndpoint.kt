@@ -14,13 +14,29 @@ class ApacheAppEndpoint(
     private val dummyClients: List<DummyClient>,
 ) {
 
+//     jak jest flux, to nie ma tutaj zadnego synchro i jest szybciej, tak samo szybko dziala niezaleznie od ilosci watkow XD
+//    @GetMapping("/dummy/{id}")
+//    fun dummyValue(@PathVariable id: String): Flux<String> {
+//        val startDummyValue = System.nanoTime()
+//        return Flux
+//            .fromIterable(dummyClients)
+//            .flatMap { it.get(id) }
+////            .collectList()
+//            .doOnNext {
+//                val endDummyValue = System.nanoTime()
+//                val dummyValueDuration = Duration.ofNanos(endDummyValue - startDummyValue)
+//                Metrics.timer("dummyValueDuration").record(dummyValueDuration)
+//            }
+//    }
+
+
     @GetMapping("/dummy/{id}")
     fun dummyValue(@PathVariable id: String): Mono<List<String>> {
         val startDummyValue = System.nanoTime()
         return Flux
             .fromIterable(dummyClients)
             .flatMap { it.get(id) }
-            .collectList()
+            .collectList() // ta linijka jest najbardziej kluczwa w tym wszystkim XDD
             .doOnNext {
                 val endDummyValue = System.nanoTime()
                 val dummyValueDuration = Duration.ofNanos(endDummyValue - startDummyValue)

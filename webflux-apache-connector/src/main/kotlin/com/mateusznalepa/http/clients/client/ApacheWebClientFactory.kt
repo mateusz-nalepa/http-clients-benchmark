@@ -17,7 +17,7 @@ class ApacheWebClientFactory200(
     private val webClientBuilder: WebClient.Builder,
 ) : ApacheWebClientFactory {
 
-    val client = ApacheConfig.create(1, 500,  24)
+//    val client = ApacheConfig.create(1, 500,  24)
 
     override fun createWebClient(number: Int): WebClient =
         webClientBuilder
@@ -25,12 +25,15 @@ class ApacheWebClientFactory200(
             .build()
 
     private fun createConnector(number: Int): ClientHttpConnector =
-//        HttpComponentsClientHttpConnector(ApacheConfig.create(number, 500, Runtime.getRuntime().availableProcessors()))
+//        HttpComponentsClientHttpConnector(ApacheConfig.create(number, 25, Runtime.getRuntime().availableProcessors()))
 
         // w sumie nie widac jakiejs roznicy miedzy tymi dwoma
-//        HttpComponentsClientHttpConnector(ApacheConfig.create(number, 500, Runtime.getRuntime().availableProcessors()))
+        HttpComponentsClientHttpConnector(
+            // 500 i 160
+            ApacheConfig.create(number, 500, Runtime.getRuntime().availableProcessors())
+        )
 //        HttpComponentsClientHttpConnector(ApacheConfig.create(number, 500, 25))
-        HttpComponentsClientHttpConnector(client)
+//        HttpComponentsClientHttpConnector(client)
 }
 
 @Component
@@ -54,14 +57,15 @@ class ApacheWebClientFactory8(
 
 //    // chyba jest po prostu cos nie tak z synchronizacja tych danych XD
     // NA TYM TRZEBA SIE SKUPIC I ZNALEZC ROZNICE
-    val client = ApacheConfig.create(1, 500,  20)
+//    val client = ApacheConfig.create(1, 500,  Runtime.getRuntime().availableProcessors())
+//    val client = ApacheConfig.create(1, 500,  20)
 
 
     // jest zdecydowanie mniej RPSow zarowno w kliencie, jak i przy serwerze
 //    val client = ApacheConfig.create(1, 500,  2)
 
 
-
+    val client = ApacheConfig.create(1, 500, Runtime.getRuntime().availableProcessors()) // 500 i 8
 
     // czasy klientow sa minimalnie wieksze, jak jest wiecej watkow, wiec tym bardziej nie wiem, czemu jest wiecej RPS XD
 

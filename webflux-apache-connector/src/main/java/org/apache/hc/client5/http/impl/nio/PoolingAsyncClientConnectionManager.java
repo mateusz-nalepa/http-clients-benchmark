@@ -322,6 +322,7 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
 //                                long leaseDuration = (leaseEndTime - leaseStartTime) / 1000000;
 ////                                NALEPA_LOG.error("{}, Manager: leaseTime: {}", Thread.currentThread(), leaseDuration);
 //                                Metrics.timer("leaseConnection").record(leaseDuration, TimeUnit.MILLISECONDS);
+
                             final ManagedAsyncClientConnection connection = poolEntry.getConnection();
                             if (connection != null) {
                                 connection.activate();
@@ -333,6 +334,7 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("{} acquired {}", id, ConnPoolSupport.getId(endpoint));
                             }
+//                            NALEPA_LOG.error("{} lease endpoint: {}", Thread.currentThread(), ConnPoolSupport.getId(endpoint));
                             resultFuture.completed(endpoint);
                         }
 
@@ -385,6 +387,7 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
 
     @Override
     public void release(final AsyncConnectionEndpoint endpoint, final Object state, final TimeValue keepAlive) {
+        Long startReleaseConnection = System.nanoTime();
         Args.notNull(endpoint, "Managed endpoint");
         Args.notNull(keepAlive, "Keep-alive time");
         final PoolEntry<HttpRoute, ManagedAsyncClientConnection> entry = cast(endpoint).detach();
@@ -396,7 +399,6 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
         }
         final ManagedAsyncClientConnection connection = entry.getConnection();
         boolean reusable = connection != null && connection.isOpen();
-//        Long startReleaseConnection = HODOR
         try {
             if (reusable) {
                 entry.updateState(state);
@@ -421,6 +423,10 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
                 LOG.debug("{} connection released {}", ConnPoolSupport.getId(endpoint), ConnPoolSupport.formatStats(entry.getRoute(), entry.getState(), pool));
             }
         }
+        Long endReleaseConnection = System.nanoTime();
+        Duration releaseConnectionDuration = Duration.ofNanos(endReleaseConnection - startReleaseConnection);
+        Metrics.timer("releaseConnectionDuration").record(releaseConnectionDuration);
+//        NALEPA_LOG.error("{} release endpoint: {}", Thread.currentThread(), ConnPoolSupport.getId(endpoint));
     }
 
     @Override
@@ -431,6 +437,7 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
             final Object attachment,
             final HttpContext context,
             final FutureCallback<AsyncConnectionEndpoint> callback) {
+        Long startConnectTime = System.nanoTime();
         Args.notNull(endpoint, "Endpoint");
         Args.notNull(connectionInitiator, "Connection initiator");
         final InternalConnectionEndpoint internalEndpoint = cast(endpoint);
@@ -456,7 +463,6 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
             LOG.debug("{} connecting endpoint to {} ({})", ConnPoolSupport.getId(endpoint), host, connectTimeout);
         }
 //        NALEPA_LOG.error("{} Manager connect: ", Thread.currentThread());
-        Long startConnectTime = System.nanoTime();
         final Future<ManagedAsyncClientConnection> connectFuture = connectionOperator.connect(
                 connectionInitiator,
                 host,
@@ -687,6 +693,7 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
 
         private final AtomicReference<PoolEntry<HttpRoute, ManagedAsyncClientConnection>> poolEntryRef;
         private final String id;
+        private Long startProcessingConnection;
 
         InternalConnectionEndpoint(final PoolEntry<HttpRoute, ManagedAsyncClientConnection> poolEntry) {
             this.poolEntryRef = new AtomicReference<>(poolEntry);
@@ -715,7 +722,22 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
         }
 
         PoolEntry<HttpRoute, ManagedAsyncClientConnection> detach() {
-            return poolEntryRef.getAndSet(null);
+            PoolEntry<HttpRoute, ManagedAsyncClientConnection> andSet = poolEntryRef.getAndSet(null);
+
+            Long endProcessingConnection = System.nanoTime();
+            Duration processingConnectionDuration = Duration.ofNanos(endProcessingConnection - startProcessingConnection);
+            Metrics.timer("processingConnectionDuration").record(processingConnectionDuration);
+//            Metrics.gauge("processingConnectionDurationSummaryGauge", processingConnectionDuration.toMillis());
+//            Metrics.summary("processingConnectionDurationSummary").record(processingConnectionDuration.toMillis());
+
+//            Metrics.gauge("processingConnectionDuration_actual", processingConnectionDuration.toMillis());
+
+//            NALEPA_LOG.error("{} endpoint end processing on connection: {}. Took: {}ms",
+//                    Thread.currentThread(),
+//                    ConnPoolSupport.getId(andSet.getConnection()),
+//                    processingConnectionDuration.toMillis()
+//            );
+            return andSet;
         }
 
         @Override
@@ -757,11 +779,13 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
                 final AsyncClientExchangeHandler exchangeHandler,
                 final HandlerFactory<AsyncPushConsumer> pushHandlerFactory,
                 final HttpContext context) {
+            startProcessingConnection = System.nanoTime();
             final ManagedAsyncClientConnection connection = getValidatedPoolEntry().getConnection();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("{} executing exchange {} over {}", id, exchangeId, ConnPoolSupport.getId(connection));
             }
             context.setProtocolVersion(connection.getProtocolVersion());
+//            NALEPA_LOG.error("{} endpoint start processing on connection: {}", Thread.currentThread(), ConnPoolSupport.getId(connection));
             connection.submitCommand(
                     new RequestExecutionCommand(exchangeHandler, pushHandlerFactory, context),
                     Command.Priority.NORMAL);
