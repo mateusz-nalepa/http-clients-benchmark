@@ -257,12 +257,13 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
         if (LOG.isDebugEnabled()) {
             LOG.debug("{} endpoint lease request ({}) {}", id, requestTimeout, ConnPoolSupport.formatStats(route, state, pool));
         }
+//        Long leaseStartTime = System.nanoTime();
+
         return new Future<AsyncConnectionEndpoint>() {
 
             final ConnectionConfig connectionConfig = resolveConnectionConfig(route);
             final BasicFuture<AsyncConnectionEndpoint> resultFuture = new BasicFuture<>(callback);
 
-            Long leaseStartTime = System.nanoTime();
 
             final Future<PoolEntry<HttpRoute, ManagedAsyncClientConnection>> leaseFuture = pool.lease(
                     route,
@@ -271,12 +272,12 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
 
                         @Override
                         public void completed(final PoolEntry<HttpRoute, ManagedAsyncClientConnection> poolEntry) {
-                            if (poolEntry.hasConnection()) {
-                                Long leaseEndTime = System.nanoTime();
-                                Duration leaseDuration = Duration.ofNanos(leaseEndTime - leaseStartTime);
-//                                NALEPA_LOG.error("{}, Manager: leaseTime: {}", Thread.currentThread(), leaseDuration);
-                                Metrics.timer("leaseConnection").record(leaseDuration);
-                            }
+//                            if (poolEntry.hasConnection()) {
+////                                Long leaseEndTime = System.nanoTime();
+////                                Duration leaseDuration = Duration.ofNanos(leaseEndTime - leaseStartTime);
+//////                                NALEPA_LOG.error("{}, Manager: leaseTime: {}", Thread.currentThread(), leaseDuration);
+////                                Metrics.timer("leaseConnection").record(leaseDuration);
+//                            }
                             if (poolEntry.hasConnection()) {
                                 final TimeValue timeToLive = connectionConfig.getTimeToLive();
                                 if (TimeValue.isNonNegative(timeToLive)) {
@@ -317,6 +318,10 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
                         }
 
                         void leaseCompleted(final PoolEntry<HttpRoute, ManagedAsyncClientConnection> poolEntry) {
+//                                Long leaseEndTime = System.nanoTime();
+//                                long leaseDuration = (leaseEndTime - leaseStartTime) / 1000000;
+////                                NALEPA_LOG.error("{}, Manager: leaseTime: {}", Thread.currentThread(), leaseDuration);
+//                                Metrics.timer("leaseConnection").record(leaseDuration, TimeUnit.MILLISECONDS);
                             final ManagedAsyncClientConnection connection = poolEntry.getConnection();
                             if (connection != null) {
                                 connection.activate();
@@ -391,6 +396,7 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
         }
         final ManagedAsyncClientConnection connection = entry.getConnection();
         boolean reusable = connection != null && connection.isOpen();
+//        Long startReleaseConnection = HODOR
         try {
             if (reusable) {
                 entry.updateState(state);

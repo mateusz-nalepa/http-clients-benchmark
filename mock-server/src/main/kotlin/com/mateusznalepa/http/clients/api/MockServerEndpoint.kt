@@ -14,6 +14,6 @@ class MockServerEndpoint {
     fun stub(@PathVariable id: Int): Mono<out ResponseEntity<out Any>> =
         Mono
             .just(ResponseEntity.ok(responses[1]))
-            .delayElement(Duration.ofMillis(30))
+            .delayElement(Duration.ofMillis(90))
 
 }

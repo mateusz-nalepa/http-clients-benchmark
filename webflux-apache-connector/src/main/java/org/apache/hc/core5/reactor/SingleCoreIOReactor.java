@@ -27,6 +27,7 @@
 
 package org.apache.hc.core5.reactor;
 
+import io.micrometer.core.instrument.Metrics;
 import org.apache.hc.client5.http.impl.nio.NalepaLogger;
 import org.apache.hc.core5.concurrent.FutureCallback;
 import org.apache.hc.core5.function.Callback;
@@ -112,15 +113,17 @@ class SingleCoreIOReactor extends AbstractSingleCoreIOReactor implements Connect
 
     @Override
     void doExecute() throws IOException {
+        Metrics.counter("singleCoreIOReactorDoExecute").increment();
         while (!Thread.currentThread().isInterrupted()) {
 
 
             Long startSelectorSelect = System.nanoTime();
-
+            Thread currentThread = Thread.currentThread();
             final int readyCount = this.selector.select(this.selectTimeoutMillis);
 
             Long endSelectorSelect = System.nanoTime();
             Duration processSelectorSelect = Duration.ofNanos(endSelectorSelect - startSelectorSelect);
+            Metrics.timer("selectorSelect").record(processSelectorSelect);
 //            NALEPA_LOG.error("{} selector.select(this.selectTimeoutMillis) took: {}",
 //                    Thread.currentThread(),
 //                    processSelectorSelect
@@ -144,11 +147,8 @@ class SingleCoreIOReactor extends AbstractSingleCoreIOReactor implements Connect
                 processEvents(this.selector.selectedKeys());
                 Long endProcessSelectedIOEvents = System.nanoTime();
                 Duration processSelectedIOEvents = Duration.ofNanos(endProcessSelectedIOEvents - startProcessSelectedIOEvents);
-//                NALEPA_LOG.error("{} Process selected I/O events took: {} for readyCount: {}",
-//                        Thread.currentThread(),
-//                        processSelectedIOEvents,
-//                        readyCount
-//                );
+                Metrics.timer("processSelectedEvents").record(processSelectedIOEvents);
+                Metrics.gauge("processSelectedEvents_number", readyCount);
             }
 
             validateActiveChannels();

@@ -39,9 +39,6 @@ import javax.net.ssl.SSLSession;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
-import java.time.Duration;
-
-import static org.apache.hc.client5.http.impl.nio.NalepaLogger.NALEPA_LOG;
 
 class AbstractHttp1IOEventHandler implements HttpConnectionEventHandler {
 
@@ -62,13 +59,8 @@ class AbstractHttp1IOEventHandler implements HttpConnectionEventHandler {
 
     @Override
     public void inputReady(final IOSession session, final ByteBuffer src) throws IOException {
-//        NALEPA_LOG.error("{} Duplexer: inputReady", Thread.currentThread().getName());
         try {
-            Long startTime = System.nanoTime();
             streamDuplexer.onInput(src);
-            Long endTime = System.nanoTime();
-            Duration inputReadyTime = Duration.ofNanos(endTime - startTime);
-//            NALEPA_LOG.error("{} Duplexer: inputReady time: {}", Thread.currentThread().getName(), inputReadyTime);
         } catch (final HttpException ex) {
             streamDuplexer.onException(ex);
         }

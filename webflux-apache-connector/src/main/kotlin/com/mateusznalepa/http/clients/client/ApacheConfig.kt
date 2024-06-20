@@ -15,21 +15,32 @@ import org.springframework.scheduling.concurrent.CustomizableThreadFactory
 
 object ApacheConfig {
 
-    fun create(number: Int): CloseableHttpAsyncClient {
+    fun create(number: Int, maxConn: Int, threadCount: Int): CloseableHttpAsyncClient {
         val ioReactorConfig = IOReactorConfig
             .custom()
             .setSoTimeout(Timeout.ofMilliseconds(500))
             .setSelectInterval(Timeout.ofMilliseconds(50))
-            .setIoThreadCount(Runtime.getRuntime().availableProcessors())
+            .setIoThreadCount(threadCount)
             .setTcpNoDelay(true)
             .setSoKeepAlive(true) //                                        .setRcvBufSize(8192)
             .build()
 
+        // maxConnTotal - ma sens, jak sie lacze do wiecej niz 1 hosta
+        // maxConnPerRoute - czyli ile jest do konkretnego hosta
+        // jak mam 2 hosty i maxConnPerRoute =6 to maxymalnie moge miec 12 polaczen, wiec ustawianie wtedy maxTotal na wieksze niz 12 nie ma sensu, tak mowi copilot XD
         val connectionManager =
             PoolingAsyncClientConnectionManagerBuilder
                 .create()
-                .setMaxConnTotal(500)
-                .setMaxConnPerRoute(500)
+//                .setMaxConnTotal(150)
+//                .setMaxConnPerRoute(150)
+//                .setMaxConnTotal(300)
+//                .setMaxConnPerRoute(300)
+//                .setMaxConnTotal(600)
+//                .setMaxConnPerRoute(600)
+
+                // setup pod wiele watkow xd
+                .setMaxConnTotal(maxConn)
+                .setMaxConnPerRoute(maxConn)
                 .setDefaultConnectionConfig(
                     ConnectionConfig
                         .custom()
