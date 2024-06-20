@@ -52,19 +52,23 @@ object ApacheConfig {
                 .build()
 
         // TODO: dodaj to na grafanie XD
-        Metrics.gauge("connection_available", listOf(Tag.of("type", "available_idle")), connectionManager) {
+        Metrics.gauge("connection_available", listOf(Tag.of("clientNumber", number.toString()), Tag.of("type", "available_idle")), connectionManager) {
             manager -> manager.totalStats.available.toDouble()
         }
 
-        Metrics.gauge("connection_available", listOf(Tag.of("type", "max")), connectionManager) {
+        Metrics.gauge("connection_available", listOf(Tag.of("clientNumber", number.toString()), Tag.of("type", "max")), connectionManager) {
                 manager -> manager.totalStats.max.toDouble()
         }
 
-        Metrics.gauge("connection_available", listOf(Tag.of("type", "leased")), connectionManager) {
+        Metrics.gauge("connection_available", listOf(Tag.of("clientNumber", number.toString()), Tag.of("type", "leased")), connectionManager) {
                 manager -> manager.totalStats.leased.toDouble()
         }
-        Metrics.gauge("connection_available", listOf(Tag.of("type", "pending")), connectionManager) {
+        Metrics.gauge("connection_available", listOf(Tag.of("clientNumber", number.toString()), Tag.of("type", "pending")), connectionManager) {
                 manager -> manager.totalStats.pending.toDouble()
+        }
+
+        Metrics.gauge("connection_available", listOf(Tag.of("clientNumber", number.toString()), Tag.of("type", "usage")), connectionManager) {
+                manager -> (manager.totalStats.leased.toDouble() / manager.totalStats.max.toDouble()) * 100.0
         }
 
         return HttpAsyncClients

@@ -620,7 +620,7 @@ abstract class AbstractHttp1StreamDuplexer<IncomingMessage extends HttpMessage, 
          * if this channel is closed in it.
          */
         int removeCapacity(final int delta) {
-            synchronized (lock) {
+            synchronized (lock) { // HODOR - tutaj jakic lock
                 updateWindow(-delta);
                 if (window <= 0) {
                     ioSession.clearEvent(SelectionKey.OP_READ);
@@ -643,7 +643,7 @@ abstract class AbstractHttp1StreamDuplexer<IncomingMessage extends HttpMessage, 
          * read events outside of the context of the request the channel was created for
          */
         void close() {
-            synchronized (lock) {
+            synchronized (lock) { // tutaj lock sie ciagle zwieksza, w sensie na toString() to widac
                 closed = true;
             }
         }

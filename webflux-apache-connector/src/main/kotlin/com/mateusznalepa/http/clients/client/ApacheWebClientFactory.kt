@@ -23,7 +23,8 @@ class ApacheWebClientFactory200(
             .build()
 
     private fun createConnector(number: Int): ClientHttpConnector =
-        HttpComponentsClientHttpConnector(ApacheConfig.create(number, 10, Runtime.getRuntime().availableProcessors()))
+        HttpComponentsClientHttpConnector(ApacheConfig.create(number, 500, Runtime.getRuntime().availableProcessors()))
+//        HttpComponentsClientHttpConnector(ApacheConfig.create(number, 500, 25))
 }
 
 @Component
@@ -33,7 +34,11 @@ class ApacheWebClientFactory8(
 ) : ApacheWebClientFactory {
 
 //    val client = ApacheConfig.create(1, 600, Runtime.getRuntime().availableProcessors() * 20)
-    val client = ApacheConfig.create(1, 200, Runtime.getRuntime().availableProcessors() * 20)
+//    val client = ApacheConfig.create(1, 200, Runtime.getRuntime().availableProcessors() * 20)
+//    ilosc watkow * 4 daje prawie takie same wyniki co 500 watkow XD
+    // ofc jeśli chodzi o klienta samego w sobie, bo na http RPS ciut różnica jest :thinking_face:
+//    val client = ApacheConfig.create(1, 500, Runtime.getRuntime().availableProcessors() * 4)
+    val client = ApacheConfig.create(1, 500, Runtime.getRuntime().availableProcessors())
 
     override fun createWebClient(number: Int): WebClient =
         webClientBuilder

@@ -47,13 +47,14 @@ Tego w ogóle nie ma dla Apache
 
 # Inne jeszcze XD
 ```shell
-perf record -F 99 -p 6730 -g -- sleep 5
+#perf record -F 99 -p 58360 -g -- sleep 10
+perf record -F 99 -p 58360 -g -- sleep 10
 i dopiero po chwili te XD
 
 
-perf script > apache_perf.perf &&
-./stackcollapse-perf.pl apache_perf.perf > apache_perf.folded && 
-./flamegraph.pl apache_perf.folded > apache_perf.svg
+perf script > apache_perf_8.perf &&
+./stackcollapse-perf.pl apache_perf_8.perf > apache_perf_8.folded && 
+./flamegraph.pl apache_perf_8.folded > apache_perf_8.svg
 ```
 
 oraz

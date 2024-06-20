@@ -27,6 +27,7 @@
 
 package org.apache.hc.core5.util;
 
+import io.micrometer.core.instrument.Metrics;
 import org.apache.hc.client5.http.impl.nio.NalepaLogger;
 import org.apache.hc.core5.http.Chars;
 
@@ -59,6 +60,7 @@ public final class CharArrayBuffer implements CharSequence, Serializable {
 //        );
         Args.notNegative(capacity, "Buffer capacity");
         this.array = new char[capacity];
+        Metrics.counter("charArrayBufferAllocate").increment();
     }
 
     private void expand(final int newlen) {

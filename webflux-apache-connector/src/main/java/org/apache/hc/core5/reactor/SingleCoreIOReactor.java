@@ -120,6 +120,7 @@ class SingleCoreIOReactor extends AbstractSingleCoreIOReactor implements Connect
 
         Metrics.counter("singleCoreIOReactorDoExecute").increment();
         while (!Thread.currentThread().isInterrupted()) {
+            Long startWholeReactor = System.nanoTime();
 
 
             Long startSelectorSelect = System.nanoTime();
@@ -156,7 +157,16 @@ class SingleCoreIOReactor extends AbstractSingleCoreIOReactor implements Connect
                 Metrics.gauge("processSelectedEvents_number", readyCount);
             }
 
+
+            Long startValidateActiveChannels = System.nanoTime();
+
             validateActiveChannels();
+
+
+            Long endValidateActiveChannels = System.nanoTime();
+            Duration processValidateActiveChannels = Duration.ofNanos(endValidateActiveChannels - startValidateActiveChannels);
+            Metrics.timer("processValidateActiveChannels").record(processValidateActiveChannels);
+
 
             // Process closed sessions
             processClosedSessions();
@@ -174,6 +184,9 @@ class SingleCoreIOReactor extends AbstractSingleCoreIOReactor implements Connect
             if (getStatus() == IOReactorStatus.SHUT_DOWN) {
                 break;
             }
+            Long endWholeReactor = System.nanoTime();
+            Duration processWholeReactor = Duration.ofNanos(endWholeReactor - startWholeReactor);
+            Metrics.timer("processWholeReactor").record(processWholeReactor);
         }
     }
 
