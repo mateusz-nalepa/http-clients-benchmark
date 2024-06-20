@@ -23,7 +23,7 @@ class ApacheWebClientFactory200(
             .build()
 
     private fun createConnector(number: Int): ClientHttpConnector =
-        HttpComponentsClientHttpConnector(ApacheConfig.create(number, 30, Runtime.getRuntime().availableProcessors()))
+        HttpComponentsClientHttpConnector(ApacheConfig.create(number, 10, Runtime.getRuntime().availableProcessors()))
 }
 
 @Component
@@ -32,7 +32,8 @@ class ApacheWebClientFactory8(
     private val webClientBuilder: WebClient.Builder,
 ) : ApacheWebClientFactory {
 
-    val client = ApacheConfig.create(1, 600, Runtime.getRuntime().availableProcessors() * 20)
+//    val client = ApacheConfig.create(1, 600, Runtime.getRuntime().availableProcessors() * 20)
+    val client = ApacheConfig.create(1, 200, Runtime.getRuntime().availableProcessors() * 20)
 
     override fun createWebClient(number: Int): WebClient =
         webClientBuilder

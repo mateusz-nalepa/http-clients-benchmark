@@ -113,6 +113,11 @@ class SingleCoreIOReactor extends AbstractSingleCoreIOReactor implements Connect
 
     @Override
     void doExecute() throws IOException {
+        /*
+            Wychodzi że to jest naprawde super, jak jest dużo pracy, ale im więcej czekania, tym lepiej mieć więcej wątków??
+            im wiecej czasu na leaseConnection, bo mniej polaczen, tym więcej czasu jest tutaj, tzn na selectorSelect
+         */
+
         Metrics.counter("singleCoreIOReactorDoExecute").increment();
         while (!Thread.currentThread().isInterrupted()) {
 
