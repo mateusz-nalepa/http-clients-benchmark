@@ -27,12 +27,21 @@ sudo bpftrace -e 'profile:hz:99 /pid == 77396/ { @[kstack()] = count(); } interv
 
 # Async profiler
 
+
+jak chce bez walla to trzeba:
 ```shell
-./asprof -d 1200 -f apache_14_200t_z_wallem.html -e wall -t 171269
+sudo su
+sysctl kernel.kptr_restrict=0
+sysctl kernel.perf_event_paranoid=1
+exit
 ```
 
 ```shell
-./asprof -d 300 -f netty_12_200t_bez_walla.html 140146
+./asprof -d 120 -f apache_20_watkow_wall.html -e wall -t 87781
+```
+
+```shell
+./asprof -d 120 -f apache_24_watkow_wall.html -e wall -t 87923
 ```
 
 
