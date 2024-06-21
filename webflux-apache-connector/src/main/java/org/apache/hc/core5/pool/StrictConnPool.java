@@ -26,6 +26,8 @@
  */
 package org.apache.hc.core5.pool;
 
+import io.micrometer.core.instrument.Metrics;
+import org.apache.hc.client5.http.impl.nio.NalepaLogger;
 import org.apache.hc.core5.annotation.Contract;
 import org.apache.hc.core5.annotation.ThreadingBehavior;
 import org.apache.hc.core5.concurrent.BasicFuture;
@@ -35,13 +37,12 @@ import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.io.ModalCloseable;
 import org.apache.hc.core5.util.*;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static org.apache.hc.client5.http.impl.nio.NalepaLogger.NALEPA_LOG;
 
 /**
  * Connection pool with strict connection limit guarantees.
@@ -61,7 +62,7 @@ public class StrictConnPool<T, C extends ModalCloseable> implements ManagedConnP
     private final Map<T, PerRoutePool<T, C>> routeToPool;
     private final LinkedList<LeaseRequest<T, C>> pendingRequests;
     private final Set<PoolEntry<T, C>> leased;
-    private final LinkedList<PoolEntry<T, C>> available;
+    private final LinkedList<PoolEntry<T, C>> availableXD;
     private final ConcurrentLinkedQueue<LeaseRequest<T, C>> completedRequests;
     private final Map<T, Integer> maxPerRoute;
     private final Lock lock;
@@ -90,7 +91,7 @@ public class StrictConnPool<T, C extends ModalCloseable> implements ManagedConnP
         this.routeToPool = new HashMap<>();
         this.pendingRequests = new LinkedList<>();
         this.leased = new HashSet<>();
-        this.available = new LinkedList<>();
+        this.availableXD = new LinkedList<>();
         this.completedRequests = new ConcurrentLinkedQueue<>();
         this.maxPerRoute = new HashMap<>();
         this.lock = new ReentrantLock();
@@ -130,7 +131,11 @@ public class StrictConnPool<T, C extends ModalCloseable> implements ManagedConnP
                 }
                 this.routeToPool.clear();
                 this.leased.clear();
-                this.available.clear();
+                this.availableXD.clear();
+//                NalepaLogger.NALEPA_LOG.error("{} availableXD size after clear: {}",
+//                        Thread.currentThread(),
+//                        this.availableXD.size()
+//                );
                 this.pendingRequests.clear();
             } finally {
                 this.lock.unlock();
@@ -238,12 +243,22 @@ public class StrictConnPool<T, C extends ModalCloseable> implements ManagedConnP
                 pool.free(entry, keepAlive);
                 if (keepAlive) {
                     switch (policy) {
-                        case LIFO:
-                            this.available.addFirst(entry);
+                        case LIFO: {
+                            this.availableXD.addFirst(entry);
+//                            NalepaLogger.NALEPA_LOG.error("{} availableXD size after release LIFO: {}",
+//                                    Thread.currentThread(),
+//                                    this.availableXD.size()
+//                            );
                             break;
-                        case FIFO:
-                            this.available.addLast(entry);
+                        }
+                        case FIFO: {
+                            this.availableXD.addLast(entry);
+//                            NalepaLogger.NALEPA_LOG.error("{} availableXD size after release FIFO: {}",
+//                                    Thread.currentThread(),
+//                                    this.availableXD.size()
+//                            );
                             break;
+                        }
                         default:
                             throw new IllegalStateException("Unexpected ConnPoolPolicy value: " + policy);
                     }
@@ -313,21 +328,29 @@ public class StrictConnPool<T, C extends ModalCloseable> implements ManagedConnP
 
         final PerRoutePool<T, C> pool = getPool(route);
         PoolEntry<T, C> entry;
-        for (;;) {
+        for (;;) { // to brzmi jak cos waznego XD
             entry = pool.getFree(state);
             if (entry == null) {
                 break;
             }
             if (entry.getExpiryDeadline().isExpired()) {
                 entry.discardConnection(CloseMode.GRACEFUL);
-                this.available.remove(entry);
+                this.availableXD.remove(entry);
+//                NalepaLogger.NALEPA_LOG.error("{} availableXD size after entry.getExpiryDeadline().isExpired() {}",
+//                        Thread.currentThread(),
+//                        this.availableXD.size()
+//                );
                 pool.free(entry, false);
             } else {
                 break;
             }
         }
         if (entry != null) {
-            this.available.remove(entry);
+            this.availableXD.remove(entry);
+//            NalepaLogger.NALEPA_LOG.error("{} availableXD size after entry != null {}",
+//                    Thread.currentThread(),
+//                    this.availableXD.size()
+//            );
             this.leased.add(entry);
             request.completed(entry);
             if (this.connPoolListener != null) {
@@ -347,7 +370,11 @@ public class StrictConnPool<T, C extends ModalCloseable> implements ManagedConnP
                     break;
                 }
                 lastUsed.discardConnection(CloseMode.GRACEFUL);
-                this.available.remove(lastUsed);
+                this.availableXD.remove(lastUsed);
+//                NalepaLogger.NALEPA_LOG.error("{} availableXD size after processPendingRequest {}",
+//                        Thread.currentThread(),
+//                        this.availableXD.size()
+//                );
                 pool.remove(lastUsed);
             }
         }
@@ -357,9 +384,17 @@ public class StrictConnPool<T, C extends ModalCloseable> implements ManagedConnP
             if (freeCapacity == 0) {
                 return false;
             }
-            final int totalAvailable = this.available.size();
+            final int totalAvailable = this.availableXD.size();
+//            NalepaLogger.NALEPA_LOG.error("{} availableXD size after totalAvailable {}",
+//                    Thread.currentThread(),
+//                    this.availableXD.size()
+//            );
             if (totalAvailable > freeCapacity - 1) {
-                final PoolEntry<T, C> lastUsed = this.available.removeLast();
+                final PoolEntry<T, C> lastUsed = this.availableXD.removeLast();
+//                NalepaLogger.NALEPA_LOG.error("{} availableXD size after totalAvailable > freeCapacity - 1 {}",
+//                        Thread.currentThread(),
+//                        this.availableXD.size()
+//                );
                 lastUsed.discardConnection(CloseMode.GRACEFUL);
                 final PerRoutePool<T, C> otherpool = getPool(lastUsed.getRoute());
                 otherpool.remove(lastUsed);
@@ -377,7 +412,11 @@ public class StrictConnPool<T, C extends ModalCloseable> implements ManagedConnP
     }
 
     private void fireCallbacks() {
+        // wez pomierz ta funkcje, ile zajmuje
+        // im mniej watkow, tym dluzej powinna trwac
         LeaseRequest<T, C> request;
+        Long startFireCallbacks = System.nanoTime();
+
         while ((request = this.completedRequests.poll()) != null) {
             final BasicFuture<PoolEntry<T, C>> future = request.getFuture();
             final Exception ex = request.getException();
@@ -396,6 +435,9 @@ public class StrictConnPool<T, C extends ModalCloseable> implements ManagedConnP
                 release(result, true);
             }
         }
+        Long endFireCallbacks = System.nanoTime();
+        Duration fireCallbacksDuration = Duration.ofNanos(endFireCallbacks - startFireCallbacks);
+        Metrics.timer("fireCallbacksDuration").record(fireCallbacksDuration);
     }
 
     public void validatePendingRequests() {
@@ -517,7 +559,7 @@ public class StrictConnPool<T, C extends ModalCloseable> implements ManagedConnP
             return new PoolStats(
                     this.leased.size(),
                     pendingCount,
-                    this.available.size(),
+                    this.availableXD.size(),
                     this.maxTotal);
         } finally {
             this.lock.unlock();
@@ -572,7 +614,7 @@ public class StrictConnPool<T, C extends ModalCloseable> implements ManagedConnP
     public void enumAvailable(final Callback<PoolEntry<T, C>> callback) {
         this.lock.lock();
         try {
-            final Iterator<PoolEntry<T, C>> it = this.available.iterator();
+            final Iterator<PoolEntry<T, C>> it = this.availableXD.iterator();
             while (it.hasNext()) {
                 final PoolEntry<T, C> entry = it.next();
                 callback.execute(entry);
@@ -645,7 +687,7 @@ public class StrictConnPool<T, C extends ModalCloseable> implements ManagedConnP
         buffer.append("[leased: ");
         buffer.append(this.leased.size());
         buffer.append("][available: ");
-        buffer.append(this.available.size());
+        buffer.append(this.availableXD.size());
         buffer.append("][pending: ");
         buffer.append(this.pendingRequests.size());
         buffer.append("]");

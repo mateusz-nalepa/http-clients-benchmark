@@ -31,3 +31,4 @@ przyklad 3:
 
 # czasem potrzeba po prostu wiecej polaczen i tyle? XDDDDDD
 # czy tam watkow???
+# percentyle nie sa jednak może aż tak najlepsze???????

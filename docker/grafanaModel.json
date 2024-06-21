@@ -22,336 +22,378 @@
   "links": [],
   "panels": [
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "apache_8 - 1 - p999",
-                  "apache_200 - 1 - p999"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
-      },
+      "collapsed": true,
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 1,
+        "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 84,
-      "options": {
-        "legend": {
-          "calcs": [
-            "max",
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "maxHeight": 600,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
+      "id": 90,
+      "panels": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "editorMode": "code",
-          "expr": "processingConnectionDuration_seconds{quantile=\"0.999\"}",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{instance}} - 1 - p999",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "processingConnectionDuration_seconds{quantile=\"0.99\"}",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{instance}} - 2 - p99",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "processingConnectionDuration_seconds{quantile=\"0.75\"}",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{instance}} - 3 - p75",
-          "range": true,
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "processingConnectionDuration_seconds{quantile=\"0.5\"}",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{instance}} - 4 - p50",
-          "range": true,
-          "refId": "D"
-        }
-      ],
-      "title": "Percentyle: processingConnectionDuration_seconds",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
               },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "apache_8 - 1 - p999",
-                  "apache_200 - 1 - p999"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
                   "legend": false,
                   "tooltip": false,
-                  "viz": true
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
                 }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 5,
+            "x": 0,
+            "y": 1
+          },
+          "id": 70,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "maxHeight": 600,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "max by (instance) (fireCallbacksDuration_seconds_count)",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "fireCallbacksDuration Count",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 5,
+            "x": 5,
+            "y": 1
+          },
+          "id": 68,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "maxHeight": 600,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "max by (instance) (irate(fireCallbacksDuration_seconds_count[15s]))",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}}",
+              "range": true,
+              "refId": "B"
+            }
+          ],
+          "title": "IRATE fireCallbacksDuration Count",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": [
+              {
+                "__systemRef": "hideSeriesFrom",
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exclude",
+                    "names": [
+                      "apache_8 - 1 - p999",
+                      "apache_200 - 1 - p999"
+                    ],
+                    "prefix": "All except:",
+                    "readOnly": true
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "custom.hideFrom",
+                    "value": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": true
+                    }
+                  }
+                ]
               }
             ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "id": 85,
-      "options": {
-        "legend": {
-          "calcs": [
-            "max",
-            "last"
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 10,
+            "y": 1
+          },
+          "id": 91,
+          "options": {
+            "legend": {
+              "calcs": [
+                "max",
+                "last"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "maxHeight": 600,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "fireCallbacksDuration_seconds{quantile=\"0.999\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}} - 1 - p999",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "fireCallbacksDuration_seconds{quantile=\"0.99\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}} - 2 - p99",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "fireCallbacksDuration_seconds{quantile=\"0.75\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}} - 3 - p75",
+              "range": true,
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "fireCallbacksDuration_seconds{quantile=\"0.5\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}} - 4 - p50",
+              "range": true,
+              "refId": "D"
+            }
           ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "maxHeight": 600,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "collectListDuration_seconds{quantile=\"0.999\"}",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{instance}} - 1 - p999",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "collectListDuration_seconds{quantile=\"0.99\"}",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{instance}} - 2 - p99",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "collectListDuration_seconds{quantile=\"0.75\"}",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{instance}} - 3 - p75",
-          "range": true,
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "collectListDuration_seconds{quantile=\"0.5\"}",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{instance}} - 4 - p50",
-          "range": true,
-          "refId": "D"
+          "title": "Percentyle: fireCallbacksDuration_seconds",
+          "type": "timeseries"
         }
       ],
-      "title": "Percentyle: collectListDuration_seconds",
-      "type": "timeseries"
+      "title": "StrictConnPool",
+      "type": "row"
     },
     {
       "collapsed": true,
@@ -359,7 +401,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 1
       },
       "id": 73,
       "panels": [
@@ -426,9 +468,9 @@
             "h": 7,
             "w": 5,
             "x": 0,
-            "y": 9
+            "y": 2
           },
-          "id": 70,
+          "id": 88,
           "options": {
             "legend": {
               "calcs": [],
@@ -523,9 +565,9 @@
             "h": 7,
             "w": 5,
             "x": 5,
-            "y": 9
+            "y": 2
           },
-          "id": 68,
+          "id": 89,
           "options": {
             "legend": {
               "calcs": [],
@@ -621,7 +663,7 @@
             "h": 7,
             "w": 5,
             "x": 10,
-            "y": 9
+            "y": 2
           },
           "id": 72,
           "options": {
@@ -644,9 +686,9 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "max by (instance) \n    ((increase(collectListDuration_seconds_sum[15s])\n    /   \n    increase(collectListDuration_seconds_count[15s])))\n",
+              "expr": "collectListDuration_seconds{quantile=\"0.999\"}",
               "instant": false,
-              "legendFormat": "{{instance}}",
+              "legendFormat": "{{instance}} - p999",
               "range": true,
               "refId": "A"
             }
@@ -718,7 +760,7 @@
             "h": 7,
             "w": 4,
             "x": 15,
-            "y": 9
+            "y": 2
           },
           "id": 74,
           "options": {
@@ -815,7 +857,7 @@
             "h": 7,
             "w": 5,
             "x": 19,
-            "y": 9
+            "y": 2
           },
           "id": 75,
           "options": {
@@ -858,7 +900,353 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 2
+      },
+      "id": 86,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": [
+              {
+                "__systemRef": "hideSeriesFrom",
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exclude",
+                    "names": [
+                      "apache_8 - 1 - p999",
+                      "apache_200 - 1 - p999"
+                    ],
+                    "prefix": "All except:",
+                    "readOnly": true
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "custom.hideFrom",
+                    "value": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 3
+          },
+          "id": 84,
+          "options": {
+            "legend": {
+              "calcs": [
+                "max",
+                "last"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "maxHeight": 600,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "processingConnectionDuration_seconds{quantile=\"0.999\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}} - 1 - p999",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "processingConnectionDuration_seconds{quantile=\"0.99\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}} - 2 - p99",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "processingConnectionDuration_seconds{quantile=\"0.75\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}} - 3 - p75",
+              "range": true,
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "processingConnectionDuration_seconds{quantile=\"0.5\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}} - 4 - p50",
+              "range": true,
+              "refId": "D"
+            }
+          ],
+          "title": "Percentyle: processingConnectionDuration_seconds",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": [
+              {
+                "__systemRef": "hideSeriesFrom",
+                "matcher": {
+                  "id": "byNames",
+                  "options": {
+                    "mode": "exclude",
+                    "names": [
+                      "apache_8 - 1 - p999",
+                      "apache_200 - 1 - p999"
+                    ],
+                    "prefix": "All except:",
+                    "readOnly": true
+                  }
+                },
+                "properties": [
+                  {
+                    "id": "custom.hideFrom",
+                    "value": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 3
+          },
+          "id": 85,
+          "options": {
+            "legend": {
+              "calcs": [
+                "max",
+                "last"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "maxHeight": 600,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "collectListDuration_seconds{quantile=\"0.999\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}} - 1 - p999",
+              "range": true,
+              "refId": "B"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "collectListDuration_seconds{quantile=\"0.99\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}} - 2 - p99",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "collectListDuration_seconds{quantile=\"0.75\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}} - 3 - p75",
+              "range": true,
+              "refId": "C"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "collectListDuration_seconds{quantile=\"0.5\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}} - 4 - p50",
+              "range": true,
+              "refId": "D"
+            }
+          ],
+          "title": "Percentyle: collectListDuration_seconds",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Procenty",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
       },
       "id": 63,
       "panels": [
@@ -925,7 +1313,7 @@
             "h": 5,
             "w": 5,
             "x": 0,
-            "y": 17
+            "y": 4
           },
           "id": 55,
           "options": {
@@ -1022,7 +1410,7 @@
             "h": 5,
             "w": 8,
             "x": 5,
-            "y": 17
+            "y": 4
           },
           "id": 71,
           "options": {
@@ -1120,7 +1508,7 @@
             "h": 5,
             "w": 8,
             "x": 13,
-            "y": 17
+            "y": 4
           },
           "id": 20,
           "options": {
@@ -1143,11 +1531,12 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "max by (instance) \n    ((increase(epollEventLoopRunDuration_seconds_sum[15s])\n    /   \n    increase(epollEventLoopRunDuration_seconds_count[15s])))\n",
+              "expr": "epollEventLoopRunDuration_seconds{quantile=\"0.999\"}",
+              "hide": false,
               "instant": false,
-              "legendFormat": "{{instance}}",
+              "legendFormat": "{{instance}} - p999",
               "range": true,
-              "refId": "A"
+              "refId": "B"
             }
           ],
           "title": "epollEventLoopRunDuration Times",
@@ -1163,7 +1552,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 4
       },
       "id": 58,
       "panels": [
@@ -1228,9 +1617,107 @@
           },
           "gridPos": {
             "h": 9,
-            "w": 4,
+            "w": 5,
             "x": 0,
-            "y": 18
+            "y": 5
+          },
+          "id": 49,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "maxHeight": 600,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "sum by (instance, type) (connection_available{type=\"leased\"})",
+              "hide": false,
+              "instant": false,
+              "interval": "15s",
+              "legendFormat": "{{instance}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "SUM Pool - leased",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 4,
+            "x": 5,
+            "y": 5
           },
           "id": 46,
           "options": {
@@ -1326,8 +1813,8 @@
           "gridPos": {
             "h": 9,
             "w": 5,
-            "x": 4,
-            "y": 18
+            "x": 9,
+            "y": 5
           },
           "id": 48,
           "options": {
@@ -1423,105 +1910,8 @@
           "gridPos": {
             "h": 9,
             "w": 5,
-            "x": 9,
-            "y": 18
-          },
-          "id": 49,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "maxHeight": 600,
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
-              },
-              "editorMode": "code",
-              "expr": "sum by (instance, type) (connection_available{type=\"leased\"})",
-              "hide": false,
-              "instant": false,
-              "legendFormat": "{{instance}}",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Pool - leased",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 5,
             "x": 14,
-            "y": 18
+            "y": 5
           },
           "id": 50,
           "options": {
@@ -1544,9 +1934,10 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "sum by (instance, type) (connection_available{type=\"pending\"})",
+              "expr": "max by (instance, type) (connection_available{type=\"pending\"})",
               "hide": false,
               "instant": false,
+              "interval": "15s",
               "legendFormat": "{{instance}}",
               "range": true,
               "refId": "A"
@@ -1619,7 +2010,7 @@
             "h": 9,
             "w": 5,
             "x": 19,
-            "y": 18
+            "y": 5
           },
           "id": 51,
           "options": {
@@ -1642,7 +2033,7 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "avg by (instance)  (max by (instance, clientNumber) (connection_available{type=\"usage\"}))",
+              "expr": "max by (instance)  (max by (instance, clientNumber) (connection_available{type=\"usage\"}))",
               "hide": false,
               "instant": false,
               "interval": "15s",
@@ -1718,7 +2109,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 27
+            "y": 14
           },
           "id": 45,
           "options": {
@@ -1815,7 +2206,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 27
+            "y": 14
           },
           "id": 44,
           "options": {
@@ -1912,7 +2303,7 @@
             "h": 8,
             "w": 6,
             "x": 0,
-            "y": 36
+            "y": 23
           },
           "id": 69,
           "options": {
@@ -2009,7 +2400,7 @@
             "h": 8,
             "w": 9,
             "x": 6,
-            "y": 36
+            "y": 23
           },
           "id": 61,
           "options": {
@@ -2107,7 +2498,7 @@
             "h": 8,
             "w": 9,
             "x": 15,
-            "y": 36
+            "y": 23
           },
           "id": 65,
           "options": {
@@ -2130,11 +2521,12 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "max by (instance) \n    ((increase(jvm_gc_pause_seconds_sum[15s])\n    /   \n    increase(jvm_gc_pause_seconds_count[15s])))\n",
+              "expr": "jvm_gc_pause_seconds{quantile=\"0.999\"}",
+              "hide": false,
               "instant": false,
-              "legendFormat": "{{instance}}",
+              "legendFormat": "{{instance}} - p999",
               "range": true,
-              "refId": "A"
+              "refId": "B"
             }
           ],
           "title": "jvm_gc_pause_seconds_count Times",
@@ -2150,7 +2542,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 11
+        "y": 5
       },
       "id": 39,
       "panels": [
@@ -2217,7 +2609,7 @@
             "h": 7,
             "w": 6,
             "x": 0,
-            "y": 19
+            "y": 32
           },
           "id": 38,
           "options": {
@@ -2314,7 +2706,7 @@
             "h": 7,
             "w": 6,
             "x": 6,
-            "y": 19
+            "y": 32
           },
           "id": 42,
           "options": {
@@ -2411,7 +2803,7 @@
             "h": 7,
             "w": 6,
             "x": 12,
-            "y": 19
+            "y": 32
           },
           "id": 43,
           "options": {
@@ -2508,7 +2900,7 @@
             "h": 7,
             "w": 6,
             "x": 18,
-            "y": 19
+            "y": 32
           },
           "id": 59,
           "options": {
@@ -2606,7 +2998,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 26
+            "y": 39
           },
           "id": 40,
           "options": {
@@ -2708,7 +3100,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 26
+            "y": 39
           },
           "id": 41,
           "options": {
@@ -2756,7 +3148,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 6
       },
       "id": 18,
       "panels": [
@@ -2823,7 +3215,7 @@
             "h": 5,
             "w": 5,
             "x": 0,
-            "y": 13
+            "y": 7
           },
           "id": 66,
           "options": {
@@ -2920,7 +3312,7 @@
             "h": 5,
             "w": 8,
             "x": 5,
-            "y": 13
+            "y": 7
           },
           "id": 56,
           "options": {
@@ -3018,7 +3410,7 @@
             "h": 5,
             "w": 8,
             "x": 13,
-            "y": 13
+            "y": 7
           },
           "id": 62,
           "options": {
@@ -3041,11 +3433,12 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "max by (instance) \n    ((increase(processWholeReactor_seconds_sum[15s])\n    /   \n    increase(processWholeReactor_seconds_count[15s])))\n",
+              "expr": "processWholeReactor_seconds{quantile=\"0.999\"}",
+              "hide": false,
               "instant": false,
-              "legendFormat": "{{instance}}",
+              "legendFormat": "{{instance}} - p999",
               "range": true,
-              "refId": "A"
+              "refId": "B"
             }
           ],
           "title": "processWholeReactor Times",
@@ -3114,7 +3507,7 @@
             "h": 5,
             "w": 5,
             "x": 0,
-            "y": 18
+            "y": 12
           },
           "id": 31,
           "options": {
@@ -3211,7 +3604,7 @@
             "h": 5,
             "w": 8,
             "x": 5,
-            "y": 18
+            "y": 12
           },
           "id": 32,
           "options": {
@@ -3309,7 +3702,7 @@
             "h": 5,
             "w": 7,
             "x": 13,
-            "y": 18
+            "y": 12
           },
           "id": 57,
           "options": {
@@ -3333,10 +3726,24 @@
               },
               "editorMode": "code",
               "expr": "max by (instance) \n    ((increase(selectorSelect_seconds_sum[15s])\n    /   \n    increase(selectorSelect_seconds_count[15s])))\n",
+              "hide": true,
               "instant": false,
               "legendFormat": "{{instance}}",
               "range": true,
               "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+              },
+              "editorMode": "code",
+              "expr": "selectorSelect_seconds{quantile=\"0.999\"}",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "{{instance}} - p999",
+              "range": true,
+              "refId": "B"
             }
           ],
           "title": "selectorSelect Times",
@@ -3406,7 +3813,7 @@
             "h": 5,
             "w": 4,
             "x": 20,
-            "y": 18
+            "y": 12
           },
           "id": 37,
           "options": {
@@ -3502,7 +3909,7 @@
             "h": 5,
             "w": 5,
             "x": 0,
-            "y": 23
+            "y": 17
           },
           "id": 34,
           "options": {
@@ -3599,7 +4006,7 @@
             "h": 5,
             "w": 8,
             "x": 5,
-            "y": 23
+            "y": 17
           },
           "id": 53,
           "options": {
@@ -3697,7 +4104,7 @@
             "h": 5,
             "w": 7,
             "x": 13,
-            "y": 23
+            "y": 17
           },
           "id": 36,
           "options": {
@@ -3720,11 +4127,12 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "max by (instance) \n    ((increase(processSelectedEvents_seconds_sum[15s])\n    /   \n    increase(processSelectedEvents_seconds_count[15s])))\n",
+              "expr": "processSelectedEvents_seconds{quantile=\"0.999\"}",
+              "hide": false,
               "instant": false,
-              "legendFormat": "{{instance}}",
+              "legendFormat": "{{instance}} - p999",
               "range": true,
-              "refId": "A"
+              "refId": "B"
             }
           ],
           "title": "processSelectedEvents Times",
@@ -3793,7 +4201,7 @@
             "h": 5,
             "w": 5,
             "x": 0,
-            "y": 28
+            "y": 22
           },
           "id": 52,
           "options": {
@@ -3890,7 +4298,7 @@
             "h": 5,
             "w": 8,
             "x": 5,
-            "y": 28
+            "y": 22
           },
           "id": 35,
           "options": {
@@ -3988,7 +4396,7 @@
             "h": 5,
             "w": 7,
             "x": 13,
-            "y": 28
+            "y": 22
           },
           "id": 54,
           "options": {
@@ -4011,11 +4419,12 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "max by (instance) \n    ((increase(processValidateActiveChannels_seconds_sum[15s])\n    /   \n    increase(processValidateActiveChannels_seconds_count[15s])))\n",
+              "expr": "processValidateActiveChannels_seconds{quantile=\"0.999\"}",
+              "hide": false,
               "instant": false,
-              "legendFormat": "{{instance}}",
+              "legendFormat": "{{instance}} - p999",
               "range": true,
-              "refId": "A"
+              "refId": "B"
             }
           ],
           "title": "processValidateActiveChannels Times",
@@ -4084,7 +4493,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 33
+            "y": 27
           },
           "id": 79,
           "options": {
@@ -4181,7 +4590,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 33
+            "y": 27
           },
           "id": 80,
           "options": {
@@ -4279,7 +4688,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 33
+            "y": 27
           },
           "id": 33,
           "options": {
@@ -4302,11 +4711,12 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "max by (instance) \n    ((increase(executeRequest_seconds_sum[15s])\n    /   \n    increase(executeRequest_seconds_count[15s])))\n",
+              "expr": "executeRequest_seconds{quantile=\"0.999\"}",
+              "hide": false,
               "instant": false,
-              "legendFormat": "{{instance}}",
+              "legendFormat": "{{instance}} - p999",
               "range": true,
-              "refId": "A"
+              "refId": "B"
             }
           ],
           "title": "executeRequest Times",
@@ -4376,7 +4786,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 38
+            "y": 32
           },
           "id": 82,
           "options": {
@@ -4473,7 +4883,7 @@
             "h": 7,
             "w": 7,
             "x": 8,
-            "y": 38
+            "y": 32
           },
           "id": 29,
           "options": {
@@ -4571,7 +4981,7 @@
             "h": 14,
             "w": 9,
             "x": 15,
-            "y": 38
+            "y": 32
           },
           "id": 81,
           "options": {
@@ -4594,11 +5004,12 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "max by (instance) \n    ((increase(processingConnectionDuration_seconds_sum[15s])\n    /   \n    increase(processingConnectionDuration_seconds_count[15s])))\n",
+              "expr": "processingConnectionDuration_seconds{quantile=\"0.999\"}",
+              "hide": false,
               "instant": false,
-              "legendFormat": "{{instance}}",
+              "legendFormat": "{{instance}} - p999",
               "range": true,
-              "refId": "A"
+              "refId": "B"
             }
           ],
           "title": "processingConnectionDuration Times",
@@ -4667,7 +5078,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 45
+            "y": 39
           },
           "id": 28,
           "options": {
@@ -4764,7 +5175,7 @@
             "h": 7,
             "w": 7,
             "x": 8,
-            "y": 45
+            "y": 39
           },
           "id": 83,
           "options": {
@@ -4861,7 +5272,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 52
+            "y": 46
           },
           "id": 23,
           "options": {
@@ -4957,7 +5368,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 52
+            "y": 46
           },
           "id": 77,
           "options": {
@@ -5054,7 +5465,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 52
+            "y": 46
           },
           "id": 24,
           "options": {
@@ -5077,11 +5488,12 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "max by (instance) \n    ((increase(leaseConnection_seconds_sum[15s])\n    /   \n    increase(leaseConnection_seconds_count[15s])))\n",
+              "expr": "leaseConnection_seconds{quantile=\"0.999\"}",
+              "hide": false,
               "instant": false,
-              "legendFormat": "{{instance}}",
+              "legendFormat": "{{instance}} - p999",
               "range": true,
-              "refId": "A"
+              "refId": "B"
             }
           ],
           "title": "leaseConnection Times",
@@ -5150,7 +5562,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 57
+            "y": 51
           },
           "id": 76,
           "options": {
@@ -5246,7 +5658,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 57
+            "y": 51
           },
           "id": 26,
           "options": {
@@ -5343,7 +5755,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 57
+            "y": 51
           },
           "id": 78,
           "options": {
@@ -5366,11 +5778,12 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "max by (instance) \n    ((increase(releaseConnectionDuration_seconds_sum[15s])\n    /   \n    increase(releaseConnectionDuration_seconds_count[15s])))\n",
+              "expr": "releaseConnectionDuration_seconds{quantile=\"0.999\"}",
+              "hide": false,
               "instant": false,
-              "legendFormat": "{{instance}}",
+              "legendFormat": "{{instance}} - p999",
               "range": true,
-              "refId": "A"
+              "refId": "B"
             }
           ],
           "title": "releaseConnectionDuration Times",
@@ -5439,7 +5852,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 62
+            "y": 56
           },
           "id": 19,
           "options": {
@@ -5536,7 +5949,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 62
+            "y": 56
           },
           "id": 27,
           "options": {
@@ -5634,7 +6047,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 62
+            "y": 56
           },
           "id": 30,
           "options": {
@@ -5657,11 +6070,12 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "max by (instance) \n    ((increase(managerConnect_seconds_sum[15s])\n    /   \n    increase(managerConnect_seconds_count[15s])))\n",
+              "expr": "managerConnect_seconds{quantile=\"0.999\"}",
+              "hide": false,
               "instant": false,
-              "legendFormat": "{{instance}}",
+              "legendFormat": "{{instance}} - p999",
               "range": true,
-              "refId": "A"
+              "refId": "B"
             }
           ],
           "title": "managerConnect Times",
@@ -5730,7 +6144,7 @@
             "h": 5,
             "w": 8,
             "x": 0,
-            "y": 67
+            "y": 61
           },
           "id": 21,
           "options": {
@@ -5827,7 +6241,7 @@
             "h": 5,
             "w": 8,
             "x": 8,
-            "y": 67
+            "y": 61
           },
           "id": 25,
           "options": {
@@ -5925,7 +6339,7 @@
             "h": 5,
             "w": 8,
             "x": 16,
-            "y": 67
+            "y": 61
           },
           "id": 22,
           "options": {
@@ -5948,11 +6362,12 @@
                 "uid": "PBFA97CFB590B2093"
               },
               "editorMode": "code",
-              "expr": "max by (instance) \n    ((increase(discardConnection_seconds_sum[15s])\n    /   \n    increase(discardConnection_seconds_count[15s])))\n",
+              "expr": "discardConnection_seconds{quantile=\"0.999\"}",
+              "hide": false,
               "instant": false,
-              "legendFormat": "{{instance}}",
+              "legendFormat": "{{instance}} - p999",
               "range": true,
-              "refId": "A"
+              "refId": "B"
             }
           ],
           "title": "discardConnection Times",
@@ -5968,7 +6383,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 7
       },
       "id": 17,
       "panels": [
@@ -6062,7 +6477,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 58
+            "y": 8
           },
           "id": 14,
           "options": {
@@ -6186,7 +6601,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 58
+            "y": 8
           },
           "id": 13,
           "options": {
@@ -6313,7 +6728,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 66
+            "y": 16
           },
           "id": 12,
           "options": {
@@ -6440,7 +6855,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 66
+            "y": 16
           },
           "id": 15,
           "options": {
@@ -6541,7 +6956,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 74
+            "y": 24
           },
           "id": 10,
           "options": {
@@ -6642,7 +7057,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 74
+            "y": 24
           },
           "id": 11,
           "options": {
@@ -6743,7 +7158,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 82
+            "y": 32
           },
           "id": 5,
           "options": {
@@ -6790,7 +7205,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 8
       },
       "id": 3,
       "panels": [],
@@ -6861,7 +7276,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 15
+        "y": 9
       },
       "id": 8,
       "options": {
@@ -6966,7 +7381,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 15
+        "y": 9
       },
       "id": 64,
       "options": {
@@ -6989,11 +7404,12 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "max by (instance) \n    ((increase(dummyValueDuration_seconds_sum[15s])\n    /   \n    increase(dummyValueDuration_seconds_count[15s])))\n",
+          "expr": "dummyValueDuration_seconds{quantile=\"0.999\"}",
+          "hide": false,
           "instant": false,
-          "legendFormat": "{{instance}}",
+          "legendFormat": "{{instance}} - p999",
           "range": true,
-          "refId": "A"
+          "refId": "B"
         }
       ],
       "title": "dummyValueDuration Times",
@@ -7063,7 +7479,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 23
+        "y": 17
       },
       "id": 1,
       "options": {
@@ -7092,7 +7508,7 @@
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{instance}}",
+          "legendFormat": "{{instance}} - p999",
           "range": true,
           "refId": "B",
           "useBackend": false
@@ -7165,7 +7581,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 23
+        "y": 17
       },
       "id": 6,
       "options": {
@@ -7209,7 +7625,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 25
       },
       "id": 4,
       "panels": [],
@@ -7280,7 +7696,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 32
+        "y": 26
       },
       "id": 9,
       "options": {
@@ -7385,7 +7801,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 32
+        "y": 26
       },
       "id": 67,
       "options": {
@@ -7409,10 +7825,24 @@
           },
           "editorMode": "code",
           "expr": "max by (instance) \n    ((increase(dummyClientDuration_seconds_sum[15s])\n    /   \n    increase(dummyClientDuration_seconds_count[15s])))\n",
+          "hide": true,
           "instant": false,
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "dummyClientDuration_seconds{quantile=\"0.999\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{instance}} - p999",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "dummyClientDuration Times",
@@ -7482,7 +7912,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 40
+        "y": 34
       },
       "id": 2,
       "options": {
@@ -7510,7 +7940,7 @@
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "{{instance}}",
+          "legendFormat": "{{instance}} - p999",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -7583,7 +8013,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 40
+        "y": 34
       },
       "id": 7,
       "options": {
@@ -7636,6 +8066,6 @@
   "timezone": "browser",
   "title": "Metrics",
   "uid": "bdp8tt8kshekge",
-  "version": 32,
+  "version": 38,
   "weekStart": ""
 }
