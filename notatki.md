@@ -32,3 +32,22 @@ przyklad 3:
 # czasem potrzeba po prostu wiecej polaczen i tyle? XDDDDDD
 # czy tam watkow???
 # percentyle nie sa jednak może aż tak najlepsze???????
+
+
+
+# collectList
+wiecej watkow rules, mniej czasu sie traci na synchronizacje
+
+# bez collectList
+w sumie ilość RPS taka sama XD
+
+
+# collect list, malo watkow vs duzo
+malo watkow
+2024-06-21T13:53:37.748+02:00
+2024-06-21T13:53:38.359+02:00
+611 ms 
+
+2024-06-21T13:53:36.991+02:00
+2024-06-21T13:53:37.534+02:00
+543 

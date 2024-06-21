@@ -238,6 +238,7 @@ class HttpAsyncMainClientExec implements AsyncExecChainHandler {
             public void streamEnd(final List<? extends Header> trailers) throws HttpException, IOException {
                 final AsyncDataConsumer entityConsumer = entityConsumerRef.getAndSet(null);
                 if (entityConsumer != null) {
+                    // HODOR - to triggeruje dodanie elementu do listy
                     entityConsumer.streamEnd(trailers);
                 } else {
                     execRuntime.validateConnection();

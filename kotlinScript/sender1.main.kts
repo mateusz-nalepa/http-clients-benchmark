@@ -52,7 +52,7 @@ import java.time.Duration
 import java.time.LocalDateTime
 
 object ScriptLogger {
-    val logger: org.slf4j.Logger = org.slf4j.LoggerFactory.getLogger("ScriptLogger")
+    val logger: org.slf4j.Logger = org.slf4j.LoggerFactory.getLogger("LOG")
 }
 
 object ScriptParameters {
@@ -167,7 +167,7 @@ object ETA {
 
             ScriptLogger.logger.info(
 //                "Progress: $progress% \t\t Sent: $numberOfSentLines \t\t Left: $numberOfLinesToBeSend \t\t Average: $average RPS \t\t ETA: $eta"
-                "Progress: $progress% \t\t Average: $average RPS \t\t ETA: $eta"
+                "AVG: $average RPS \t\t ETA: $eta"
             )
         }
     }
@@ -254,7 +254,13 @@ class SenderTool(
             .readLinesAndExecute { lines ->
                 lines
                     .chunked(ScriptParameters.batchSize)
-                    .onEach { sendChunkOfLines(it) }
+                    .onEach {
+                        val chunkStart = System.nanoTime()
+                        sendChunkOfLines(it)
+                        val chunkEnd = System.nanoTime()
+                        val chunkDuration = Duration.ofNanos(chunkEnd - chunkStart)
+//                        ScriptLogger.logger.info("Chunk took: {} ms", chunkDuration.toMillis())
+                    }
                     .count()
             }
     }
@@ -284,9 +290,9 @@ class ScriptRunner(val args: Array<String>) {
     private fun processScript() {
         val senderTool = createSenderTool()
 
-        RequestSender.send("1").block()
-        RequestSender.send("1").block()
-        RequestSender.send("1").block()
+//        RequestSender.send("1").block()
+//        RequestSender.send("1").block()
+//        RequestSender.send("1").block()
 
 
         val elapsedTimeMillis = measureTimeMillis { senderTool.process() }

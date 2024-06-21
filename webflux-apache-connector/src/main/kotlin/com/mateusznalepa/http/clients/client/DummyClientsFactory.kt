@@ -1,94 +1,27 @@
 package com.mateusznalepa.http.clients.client
 
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.context.annotation.Bean
-import org.springframework.stereotype.Component
+import org.springframework.context.annotation.Configuration
 
-@Component
+
+@Configuration
 class DummyClientsFactory(
     private val apacheWebClientFactory: ApacheWebClientFactory,
+    private val beanFactory: ConfigurableListableBeanFactory,
 ) {
 
     @Bean
-    fun dummyClient1(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(1))
+    fun dummyClients(): List<DummyClient> =
+        (1..20)
+            .map {
+                val dummyClient = dummyClient(it)
+                beanFactory.initializeBean(dummyClient, "dummyClient$it")
+                beanFactory.autowireBean(dummyClient)
+                beanFactory.registerSingleton("dummyClient$it", dummyClient)
+                dummyClient
+            }
 
-    @Bean
-    fun dummyClient2(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(2))
-
-    @Bean
-    fun dummyClient3(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(3))
-
-    @Bean
-    fun dummyClient4(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(4))
-
-    @Bean
-    fun dummyClient5(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(5))
-
-    @Bean
-    fun dummyClient6(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(6))
-
-
-    @Bean
-    fun dummyClient7(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(7))
-
-
-    @Bean
-    fun dummyClient8(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(8))
-
-    @Bean
-    fun dummyClient9(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(9))
-
-    @Bean
-    fun dummyClient10(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(10))
-
-    @Bean
-    fun dummyClient11(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(11))
-
-    @Bean
-    fun dummyClient12(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(12))
-
-    @Bean
-    fun dummyClient13(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(13))
-
-    @Bean
-    fun dummyClient14(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(14))
-
-    @Bean
-    fun dummyClient15(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(15))
-
-    @Bean
-    fun dummyClient16(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(16))
-
-
-    @Bean
-    fun dummyClient17(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(17))
-
-
-    @Bean
-    fun dummyClient18(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(18))
-
-    @Bean
-    fun dummyClient19(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(19))
-
-    @Bean
-    fun dummyClient20(): DummyClient =
-        DummyClient(apacheWebClientFactory.createWebClient(20))
+    private fun dummyClient(number: Int): DummyClient =
+        DummyClient(apacheWebClientFactory.createWebClient(number))
 }

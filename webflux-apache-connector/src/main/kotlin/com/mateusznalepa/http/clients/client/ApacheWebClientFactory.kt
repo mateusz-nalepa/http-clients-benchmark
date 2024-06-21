@@ -18,6 +18,8 @@ class ApacheWebClientFactory200(
 ) : ApacheWebClientFactory {
 
 //    val client = ApacheConfig.create(1, 500,  24)
+//    val client = ApacheConfig.create(1, 500, Runtime.getRuntime().availableProcessors())
+
 
     override fun createWebClient(number: Int): WebClient =
         webClientBuilder
@@ -30,7 +32,8 @@ class ApacheWebClientFactory200(
         // w sumie nie widac jakiejs roznicy miedzy tymi dwoma
         HttpComponentsClientHttpConnector(
             // 500 i 160
-            ApacheConfig.create(number, 500, Runtime.getRuntime().availableProcessors())
+//            client
+                    ApacheConfig.create(number, 500, Runtime.getRuntime().availableProcessors())
         )
 //        HttpComponentsClientHttpConnector(ApacheConfig.create(number, 500, 25))
 //        HttpComponentsClientHttpConnector(client)

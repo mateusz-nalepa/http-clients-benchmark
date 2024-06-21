@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
 
 
 @Component
-class ApachePrometheusConfig(
+class DummyPrometheusConfig(
 	private val meterRegistry: PrometheusMeterRegistry,
 ) {
 
@@ -32,7 +32,6 @@ class ApachePrometheusConfig(
 				override fun configure(id: Id, config: DistributionStatisticConfig): DistributionStatisticConfig? {
 					return DistributionStatisticConfig
 						.builder()
-//						.expiry(java.time.Duration.ofSeconds(1))
 						.percentiles(0.50, 0.75, 0.99, 0.999)
 						.build()
 						.merge(config)

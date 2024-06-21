@@ -732,7 +732,7 @@ public class PoolingAsyncClientConnectionManager implements AsyncClientConnectio
 
 //            Metrics.gauge("processingConnectionDuration_actual", processingConnectionDuration.toMillis());
 
-//            NALEPA_LOG.error("{} endpoint end processing on connection: {}. Took: {}ms",
+//            NALEPA_LOG.error("{} endpoint end processing on connection: {}. Connection took: {}ms",
 //                    Thread.currentThread(),
 //                    ConnPoolSupport.getId(andSet.getConnection()),
 //                    processingConnectionDuration.toMillis()

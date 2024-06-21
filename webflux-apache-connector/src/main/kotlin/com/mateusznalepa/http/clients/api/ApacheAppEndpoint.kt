@@ -15,8 +15,8 @@ class ApacheAppEndpoint(
 ) {
 
 //     jak jest flux, to nie ma tutaj zadnego synchro i jest szybciej, tak samo szybko dziala niezaleznie od ilosci watkow XD
-//    @GetMapping("/dummy/{id}")
-//    fun dummyValue(@PathVariable id: String): Flux<String> {
+//    @GetMapping("/dummy-flux/{id}")
+//    fun dummyValuexd(@PathVariable id: String): Flux<String> {
 //        val startDummyValue = System.nanoTime()
 //        return Flux
 //            .fromIterable(dummyClients)
@@ -43,5 +43,20 @@ class ApacheAppEndpoint(
                 Metrics.timer("dummyValueDuration").record(dummyValueDuration)
             }
     }
+
+//    @GetMapping("/dummy/{id}")
+//    fun dummyValue(@PathVariable id: String): Mono<List<String>> {
+//        val startDummyValue = System.nanoTime()
+//        return Flux
+//            .fromIterable(dummyClients)
+//            .flatMap { it.get(id) }
+//            .then(Mono.just(listOf("XD")))
+//            .doOnNext {
+//                val endDummyValue = System.nanoTime()
+//                val dummyValueDuration = Duration.ofNanos(endDummyValue - startDummyValue)
+//                Metrics.timer("dummyValueDuration").record(dummyValueDuration)
+//            }
+//    }
+
 
 }
