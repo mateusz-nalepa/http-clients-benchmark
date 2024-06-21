@@ -59,7 +59,7 @@ object ScriptParameters {
 
     const val sourceDirectoryWithFiles = "source4"
     // na 20 sprawdz o co kaman XD
-    const val batchSize = 25
+    const val batchSize = 50
     const val appUrl = "http://localhost:8084"
 
     private val objectMapper: ObjectMapper = ObjectMapper().findAndRegisterModules()
