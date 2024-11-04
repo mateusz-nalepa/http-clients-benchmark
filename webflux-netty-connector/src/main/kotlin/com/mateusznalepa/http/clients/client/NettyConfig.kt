@@ -19,9 +19,10 @@ object NettyConfig {
                 .maxConnections(maxConnections)
                 .pendingAcquireTimeout(Duration.ofMillis(500))
                 .pendingAcquireMaxCount(maxConnections * 3)
-                .metrics(true) {
-                    ReactorNettyMetrics(1, maxConnections)
-                }
+                .metrics(true)
+//                .metrics(true) {
+//                    ReactorNettyMetrics(1, maxConnections)
+//                }
 
 
         val reactorRequestFactory = ReactorResourceFactory().apply {

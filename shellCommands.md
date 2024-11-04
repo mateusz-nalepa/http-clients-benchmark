@@ -37,11 +37,12 @@ exit
 ```
 
 ```shell
-./asprof -d 120 -f apache_20_watkow_wall.html -e wall -t 87781
+[parallel-3] INFO LOG - AVG: 192 RPS 		 ETA: 01hrs 17mins 01sec
+./asprof -d 60 -f apache_6GB_wall.html -e wall -t 9412
 ```
 
 ```shell
-./asprof -d 120 -f apache_24_watkow_wall.html -e wall -t 87923
+./asprof -d 60 -f netty_6GB_wall.html -e wall -t 10242
 ```
 
 

@@ -2,6 +2,8 @@ package com.mateusznalepa.http.clients.api
 
 import com.mateusznalepa.http.clients.client.DummyClient
 import io.micrometer.core.instrument.Metrics
+import io.netty.util.concurrent.FastThreadLocal
+import io.netty.util.internal.PlatformDependent
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
@@ -29,4 +31,17 @@ class NettyAppEndpoint(
     }
 
 
+}
+
+object Klasa {
+
+    private const val MAX_TL_ARRAY_LEN: Int = 1024
+
+    val BYTE_ARRAYS: FastThreadLocal<ByteArray> =
+        object : FastThreadLocal<ByteArray>() {
+            @Throws(Exception::class)
+            override fun initialValue(): ByteArray {
+                return PlatformDependent.allocateUninitializedArray(MAX_TL_ARRAY_LEN)
+            }
+        }
 }
