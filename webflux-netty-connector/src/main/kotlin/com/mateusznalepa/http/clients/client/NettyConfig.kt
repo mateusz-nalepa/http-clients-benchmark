@@ -14,10 +14,10 @@ import java.time.Duration
 
 @Component
 class NettyConfig(
-    @Value("\${czyJestWiecejWatkow}")
+    @Value("\${isUseDedicatedThreadsPerClient}")
     private val isUseDedicatedThreadsPerClient: Boolean,
 
-    @Value("\${typAlokatora}")
+    @Value("\${memoryAllocatorType}")
     private val memoryAllocatorType: String,
 ) {
 
@@ -41,7 +41,7 @@ class NettyConfig(
                     .followRedirect(false)
 
 
-            val alokator =
+            val memoryAllocator =
                 when (memoryAllocatorType) {
                     "pooled" -> PooledByteBufAllocator.DEFAULT
                     "unpooled" -> UnpooledByteBufAllocator.DEFAULT
@@ -49,7 +49,7 @@ class NettyConfig(
                 }
 
 
-            builder.option(ChannelOption.ALLOCATOR, alokator)
+            builder.option(ChannelOption.ALLOCATOR, memoryAllocator)
         }
 
         when (isUseDedicatedThreadsPerClient) {

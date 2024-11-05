@@ -55,16 +55,16 @@ wait_for_port $MOCK_SERVER_PORT
 ./gradlew :webflux-netty-connector:assemble
 
 java -jar webflux-netty-connector/build/libs/webflux-netty-connector-0.0.1-SNAPSHOT.jar \
- --czyJestWiecejWatkow=true \
- --typAlokatora=pooled \
+ --isUseDedicatedThreadsPerClient=true \
+ --memoryAllocatorType=pooled \
  --mockServerPort=$MOCK_SERVER_PORT \
  --server.port=$NETTY_PORT_ONE &
 
 wait_for_port $NETTY_PORT_ONE
 
 java -jar webflux-netty-connector/build/libs/webflux-netty-connector-0.0.1-SNAPSHOT.jar \
- --czyJestWiecejWatkow=false \
- --typAlokatora=pooled \
+ --isUseDedicatedThreadsPerClient=false \
+ --memoryAllocatorType=pooled \
  --mockServerPort=$MOCK_SERVER_PORT \
  --server.port=$NETTY_PORT_TWO &
 
