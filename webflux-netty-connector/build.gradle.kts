@@ -1,5 +1,5 @@
 plugins {
-	id("org.springframework.boot") version "3.3.0"
+	id("org.springframework.boot") version "3.3.5"
 	id("io.spring.dependency-management") version "1.1.5"
 	kotlin("jvm") version "1.9.24"
 	kotlin("plugin.spring") version "1.9.24"
@@ -21,7 +21,7 @@ repositories {
 dependencies {
 	implementation("io.micrometer:micrometer-registry-prometheus:1.13.1")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
-	implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.0")
+	implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.5")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
