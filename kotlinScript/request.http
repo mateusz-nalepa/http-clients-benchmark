@@ -1,1 +1,0 @@
-curl --header "Accept: application/json" http://localhost:8091/dummy/1
