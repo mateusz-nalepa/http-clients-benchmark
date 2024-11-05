@@ -26,18 +26,16 @@
 
 import com.codahale.metrics.Meter
 import com.codahale.metrics.MetricRegistry
-import com.fasterxml.jackson.databind.ObjectMapper
+import io.micrometer.core.instrument.DistributionSummary
 import io.micrometer.core.instrument.Meter.Id
-import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.config.MeterFilter
 import io.micrometer.core.instrument.distribution.DistributionStatisticConfig
 import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import io.netty.handler.ssl.SslContextBuilder
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory
-import kotlin.math.absoluteValue
-import kotlin.system.measureTimeMillis
 import org.apache.commons.lang3.time.DurationFormatUtils
+import org.slf4j.Logger
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
@@ -50,20 +48,20 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
 import java.time.LocalDateTime
+import kotlin.math.absoluteValue
+import kotlin.system.measureTimeMillis
 
 object ScriptLogger {
-    val logger: org.slf4j.Logger = org.slf4j.LoggerFactory.getLogger("LOG")
+    val logger: Logger = org.slf4j.LoggerFactory.getLogger("LOG")
 }
 
 object ScriptParameters {
+    const val SOURCE_DIRECTORY_WITH_FILES = "source1"
+    const val BATCH_SIZE = 50
+    const val APP_URL = "http://localhost:8081"
+}
 
-    const val sourceDirectoryWithFiles = "source1"
-    // na 20 sprawdz o co kaman XD
-    const val batchSize = 25
-    const val appUrl = "http://localhost:8081"
-
-    private val objectMapper: ObjectMapper = ObjectMapper().findAndRegisterModules()
-
+object Prometheus {
     val prometheus = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
     init {
@@ -81,8 +79,7 @@ object ScriptParameters {
     }
 
 
-    val senderSummary =
-        prometheus.summary("time", listOf(Tag.of("version", appUrl.drop(17))))
+    val senderSummary: DistributionSummary = prometheus.summary("time")
 }
 
 object Converter {
@@ -102,7 +99,7 @@ object ETA {
     private val postRequestsMeter: Meter = metricRegistry.meter("sendRequests")
     val numberOfIdsToBeProcessed: Long =
         calculateNumberOfLines(
-            File(ScriptParameters.sourceDirectoryWithFiles).toPath()
+            File(ScriptParameters.SOURCE_DIRECTORY_WITH_FILES).toPath()
         )
 
     init {
@@ -140,7 +137,7 @@ object ETA {
         Mono.just("dummy")
             .delayElement(Duration.ofSeconds(10))
             .map {
-                val asd = ScriptParameters.prometheus.scrape()
+                val asd = Prometheus.prometheus.scrape()
                 ScriptLogger.logger.info("\n\n$asd")
                 it
             }
@@ -234,14 +231,14 @@ object RequestSender {
         Client
             .webClient
             .get()
-            .uri("${ScriptParameters.appUrl}/dummy/$line")
+            .uri("${ScriptParameters.APP_URL}/dummy/$line")
             .header("Accept", "application/json")
             .retrieve()
             .toEntity(String::class.java)
             .doOnError { ScriptLogger.logger.error("Error occurred for line: $line", it) }
             .retryWhen(Retry.backoff(Long.MAX_VALUE, Duration.ofMillis(500)))
             .doOnSuccess { ETA.markRequestSent() }
-            .map { "ASD" }
+            .map { "Whatever" }
 }
 
 class SenderTool(
@@ -253,14 +250,8 @@ class SenderTool(
         fileProcessor
             .readLinesAndExecute { lines ->
                 lines
-                    .chunked(ScriptParameters.batchSize)
-                    .onEach {
-                        val chunkStart = System.nanoTime()
-                        sendChunkOfLines(it)
-                        val chunkEnd = System.nanoTime()
-                        val chunkDuration = Duration.ofNanos(chunkEnd - chunkStart)
-//                        ScriptLogger.logger.info("Chunk took: {} ms", chunkDuration.toMillis())
-                    }
+                    .chunked(ScriptParameters.BATCH_SIZE)
+                    .onEach { sendChunkOfLines(it) }
                     .count()
             }
     }
@@ -272,7 +263,7 @@ class SenderTool(
                     .send(line = it)
                     .elapsed()
                     .doOnNext { itt ->
-                        ScriptParameters.senderSummary.record(itt.t1.toDouble())
+                        Prometheus.senderSummary.record(itt.t1.toDouble())
                     }
                     .then()
             }
@@ -280,7 +271,7 @@ class SenderTool(
     }
 }
 
-class ScriptRunner(val args: Array<String>) {
+class ScriptRunner() {
     fun run() {
         ScriptLogger.logger.info("Script started...")
         processScript()
@@ -290,11 +281,6 @@ class ScriptRunner(val args: Array<String>) {
     private fun processScript() {
         val senderTool = createSenderTool()
 
-//        RequestSender.send("1").block()
-//        RequestSender.send("1").block()
-//        RequestSender.send("1").block()
-
-
         val elapsedTimeMillis = measureTimeMillis { senderTool.process() }
 
         ScriptLogger.logger.info("Sender summary")
@@ -302,17 +288,17 @@ class ScriptRunner(val args: Array<String>) {
         ScriptLogger.logger.info("Elapsed time ${Converter.convertMillisToHumanReadableFormat(elapsedTimeMillis)}")
         ScriptLogger.logger.info("Average: ${ETA.meanRate()} RPS")
         ScriptLogger.logger.info("Prometheus")
-        ScriptLogger.logger.info(ScriptParameters.prometheus.scrape())
+        ScriptLogger.logger.info(Prometheus.prometheus.scrape())
     }
 
     private fun createSenderTool(): SenderTool =
         SenderTool(
             fileProcessor = FileProcessor(
-                sourceDirectoryWithFiles = File(ScriptParameters.sourceDirectoryWithFiles).toPath(),
+                sourceDirectoryWithFiles = File(ScriptParameters.SOURCE_DIRECTORY_WITH_FILES).toPath(),
             ),
             requestSender = RequestSender
         )
 }
 
 System.setProperty("logback.configurationFile", "logback.xml")
-ScriptRunner(args).run()
+ScriptRunner().run()

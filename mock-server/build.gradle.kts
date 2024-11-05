@@ -39,3 +39,16 @@ kotlin {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+tasks.create("MyFatJar", Jar::class) {
+	group = "my tasks" // OR, for example, "build"
+	description = "Creates a self-contained fat JAR of the application that can be run."
+	manifest.attributes["Main-Class"] = "com.mateusznalepa.http.clients.WebfluxMockServerKt"
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	val dependencies = configurations
+		.runtimeClasspath
+		.get()
+		.map(::zipTree)
+	from(dependencies)
+	with(tasks.jar.get())
+}

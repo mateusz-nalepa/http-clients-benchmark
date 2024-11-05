@@ -1,7 +1,6 @@
-rootProject.name = "http-clients"
+rootProject.name = "http-clients-benchmark"
 
 include(
     ":webflux-netty-connector",
-    ":webflux-apache-connector",
     ":mock-server",
 )

@@ -15,10 +15,10 @@ import java.time.Duration
 @Component
 class NettyConfig(
     @Value("\${czyJestWiecejWatkow}")
-    private val czyJestWiecejWatkow: Boolean,
+    private val isUseDedicatedThreadsPerClient: Boolean,
 
     @Value("\${typAlokatora}")
-    private val typAlokatora: String,
+    private val memoryAllocatorType: String,
 ) {
 
     fun createClient(number: Int): ReactorClientHttpConnector {
@@ -28,41 +28,31 @@ class NettyConfig(
             ConnectionProvider
                 .builder("http-netty-$number-")
                 .maxConnections(maxConnections)
-                .pendingAcquireTimeout(Duration.ofMillis(500*100))
+                .pendingAcquireTimeout(Duration.ofMillis(500 * 100))
                 .pendingAcquireMaxCount(maxConnections * 3)
                 .metrics(true)
-//                .metrics(true) {
-//                    ReactorNettyMetrics(1, maxConnections)
-//                }
 
-//        -DczyJestWiecejWatkow=true -DtypAlokatora=pooled -Xms2048m -Xmx2048m -Dspring.profiles.active=8082
         val clientCustomization: (t: HttpClient) -> HttpClient = { client ->
 
             val builder =
                 client
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 500 * 100)
-//                .option(ChannelOption.ALLOCATOR, ByteBufAllocator.DEFAULT)
-//                .option(ChannelOption.ALLOCATOR, PreferHeapByteBufAllocator.DEFAULT)
-//                .option(ChannelOption.RCVBUF_ALLOCATOR, FixedRecvByteBufAllocator(8192))
                     .responseTimeout(Duration.ofMillis(500 * 100))
                     .followRedirect(false)
-                    .metrics(true) {
-                        asd -> "$asd$number"
-                    }
 
 
             val alokator =
-                when (typAlokatora) {
+                when (memoryAllocatorType) {
                     "pooled" -> PooledByteBufAllocator.DEFAULT
                     "unpooled" -> UnpooledByteBufAllocator.DEFAULT
-                    else -> throw RuntimeException("zly alokator")
+                    else -> throw RuntimeException("not supported allocator type")
                 }
 
 
             builder.option(ChannelOption.ALLOCATOR, alokator)
         }
 
-        when (czyJestWiecejWatkow) {
+        when (isUseDedicatedThreadsPerClient) {
             true -> {
                 val reactorRequestFactory = ReactorResourceFactory().apply {
                     connectionProvider = connectionProviderBuilder.build()
@@ -73,8 +63,6 @@ class NettyConfig(
             }
 
             false -> {
-//                val httpClient = clientCustomization.invoke(HttpClient.create(connectionProviderBuilder.build()))
-//                return ReactorClientHttpConnector(httpClient)
                 val reactorRequestFactory = ReactorResourceFactory().apply {
                     connectionProvider = connectionProviderBuilder.build()
                     loopResources = sharedLoopResources
@@ -88,5 +76,3 @@ class NettyConfig(
     val sharedLoopResources = LoopResources.create("http-loop-XD-pool-")
 
 }
-//23741
-//23878
