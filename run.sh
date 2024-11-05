@@ -63,7 +63,7 @@ java -jar webflux-netty-connector/build/libs/webflux-netty-connector-0.0.1-SNAPS
 wait_for_port $NETTY_PORT_ONE
 
 java -jar webflux-netty-connector/build/libs/webflux-netty-connector-0.0.1-SNAPSHOT.jar \
- --czyJestWiecejWatkow=true \
+ --czyJestWiecejWatkow=false \
  --typAlokatora=pooled \
  --mockServerPort=$MOCK_SERVER_PORT \
  --server.port=$NETTY_PORT_TWO &
