@@ -31,7 +31,7 @@ scrape_configs:
       - targets:
           - host.docker.internal:8082
         labels:
-          instance: "netty_8"
+          instance: "nettyDuzo"
   - job_name: prometheus3
     honor_timestamps: true
     scrape_interval: 5s
@@ -53,4 +53,4 @@ scrape_configs:
       - targets:
           - host.docker.internal:8084
         labels:
-          instance: "netty_200"
+          instance: "nettyMalo"

@@ -10,10 +10,11 @@ interface NettyWebClientFactory {
     fun createWebClient(number: Int): WebClient
 }
 
-@Profile("pool200")
+//@Profile("pool200")
 @Component
 class NettyWebClientFactory200(
     private val webClientBuilder: WebClient.Builder,
+    private val nettyConfig: NettyConfig,
 ) : NettyWebClientFactory {
 
     override fun createWebClient(number: Int): WebClient =
@@ -22,26 +23,26 @@ class NettyWebClientFactory200(
             .build()
 
     fun createConnector(number: Int): ClientHttpConnector =
-        NettyConfig.createClient(number, true)
+        nettyConfig.createClient(number)
 
 }
 
-@Profile("pool8")
-@Component
-class NettyWebClientFactory8(
-    private val webClientBuilder: WebClient.Builder,
-) : NettyWebClientFactory {
-
-    val connector = NettyConfig.createClient(1, false)
-
-    override fun createWebClient(number: Int): WebClient =
-        webClientBuilder
-            .clientConnector(createConnector(number))
-            .build()
-
-    fun createConnector(number: Int): ClientHttpConnector =
-        connector
-
-}
-
+//@Profile("pool8")
+//@Component
+//class NettyWebClientFactory8(
+//    private val webClientBuilder: WebClient.Builder,
+//) : NettyWebClientFactory {
+//
+//    val connector = NettyConfig.createClient(1, false)
+//
+//    override fun createWebClient(number: Int): WebClient =
+//        webClientBuilder
+//            .clientConnector(createConnector(number))
+//            .build()
+//
+//    fun createConnector(number: Int): ClientHttpConnector =
+//        connector
+//
+//}
+//
 

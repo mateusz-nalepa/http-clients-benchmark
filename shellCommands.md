@@ -74,3 +74,24 @@ perf script > apache_perf.perf &&
 ./stackcollapse-perf.pl netty_perf.perf > netty_perf.folded && 
 ./flamegraph.pl netty_perf.folded > netty_perf.svg
 ```
+
+
+
+### Nowe
+
+sudo su
+sysctl kernel.kptr_restrict=0
+sysctl kernel.perf_event_paranoid=1
+exit
+
+./asprof -d 60 -f nettyDuzo5.html -e cpu 5519
+./asprof -d 60 -f nettyMalo5.html -e cpu 6489
+
+
+pidstat -w -p 5519 1
+
+
+cat /proc/5519/sched | grep "switch\|migration"
+
+
+#### poczytaj o jeamalloc i ometrykuj PoolArena xd

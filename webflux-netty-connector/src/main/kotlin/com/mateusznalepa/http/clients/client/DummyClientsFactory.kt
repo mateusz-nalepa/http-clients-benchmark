@@ -12,7 +12,7 @@ class DummyClientsFactory(
 
     @Bean
     fun dummyClients(): List<DummyClient> =
-        (1..20)
+        (1..100)
             .map {
                 val dummyClient = dummyClient(it)
                 beanFactory.initializeBean(dummyClient, "dummyClient$it")
@@ -25,3 +25,6 @@ class DummyClientsFactory(
         DummyClient(nettyWebClientFactory.createWebClient(number))
 
 }
+
+//18714
+//18577
