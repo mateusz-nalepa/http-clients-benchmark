@@ -8,15 +8,56 @@ tracepoint:syscalls:sys_enter_read
 {
     @start[tid] = nsecs;
     @proc_name[tid] = comm;
+    @fd[tid] = args->fd;
+    @buf[tid] = args->buf;
 }
 
 tracepoint:syscalls:sys_exit_read
 / @start[tid] && pid == TARGET_PID  /
 {
     $duration = nsecs - @start[tid];
-    // if (@proc_name[tid] != "reactor-http-ep") {
-        printf("{ \"pid\": %d, \"process\": \"%s\", \"duration_ns\": %lld }\n", pid, @proc_name[tid], $duration);
-    // }
+    $retval = args->ret;
+    if ($retval > 0) {
+        printf("{ \"pid\": %d, \"process\": \"%s\", \"odczytano\": \"%d\", \"duration_ns\": %lld }\n", pid, @proc_name[tid], @fd[tid], $duration);
+
+        $bytes = $retval > 64 ? 64 : $retval; // Ogranicz wyświetlanie do 16 bajtów
+        $xd = 0;
+        //printf("XD TO %d \n", $xd);
+
+        // while($xd < $bytes) {
+        //     //printf("%d", $xd);
+        //     printf("%c", ((uint8*)@buf[tid])[$xd] >= 32 && ((uint8*)@buf[tid])[$xd] <= 126 ? ((uint8*)@buf[tid])[$xd] : 46);
+        //     $xd = $xd + 1;
+        // }
+
+           printf("%c", ((uint8*)@buf[tid])[0] >= 32 && ((uint8*)@buf[tid])[0] <= 126 ? ((uint8*)@buf[tid])[0] : 46);
+           printf("%c", ((uint8*)@buf[tid])[1] >= 32 && ((uint8*)@buf[tid])[1] <= 126 ? ((uint8*)@buf[tid])[1] : 46);
+           printf("%c", ((uint8*)@buf[tid])[2] >= 32 && ((uint8*)@buf[tid])[2] <= 126 ? ((uint8*)@buf[tid])[2] : 46);
+           printf("%c", ((uint8*)@buf[tid])[3] >= 32 && ((uint8*)@buf[tid])[3] <= 126 ? ((uint8*)@buf[tid])[3] : 46);
+           printf("%c", ((uint8*)@buf[tid])[4] >= 32 && ((uint8*)@buf[tid])[4] <= 126 ? ((uint8*)@buf[tid])[4] : 46);
+           printf("%c", ((uint8*)@buf[tid])[5] >= 32 && ((uint8*)@buf[tid])[5] <= 126 ? ((uint8*)@buf[tid])[5] : 46);
+           printf("%c", ((uint8*)@buf[tid])[6] >= 32 && ((uint8*)@buf[tid])[6] <= 126 ? ((uint8*)@buf[tid])[6] : 46);
+           printf("%c", ((uint8*)@buf[tid])[7] >= 32 && ((uint8*)@buf[tid])[7] <= 126 ? ((uint8*)@buf[tid])[7] : 46);
+           printf("%c", ((uint8*)@buf[tid])[8] >= 32 && ((uint8*)@buf[tid])[8] <= 126 ? ((uint8*)@buf[tid])[8] : 46);
+           printf("%c", ((uint8*)@buf[tid])[9] >= 32 && ((uint8*)@buf[tid])[9] <= 126 ? ((uint8*)@buf[tid])[9] : 46);
+                      printf("%c", ((uint8*)@buf[tid])[10] >= 32 && ((uint8*)@buf[tid])[10] <= 126 ? ((uint8*)@buf[tid])[10] : 46);
+                      printf("%c", ((uint8*)@buf[tid])[11] >= 32 && ((uint8*)@buf[tid])[11] <= 126 ? ((uint8*)@buf[tid])[11] : 46);
+                      printf("%c", ((uint8*)@buf[tid])[12] >= 32 && ((uint8*)@buf[tid])[12] <= 126 ? ((uint8*)@buf[tid])[12] : 46);
+                      printf("%c", ((uint8*)@buf[tid])[13] >= 32 && ((uint8*)@buf[tid])[13] <= 126 ? ((uint8*)@buf[tid])[13] : 46);
+                      printf("%c", ((uint8*)@buf[tid])[14] >= 32 && ((uint8*)@buf[tid])[14] <= 126 ? ((uint8*)@buf[tid])[14] : 46);
+                      printf("%c", ((uint8*)@buf[tid])[15] >= 32 && ((uint8*)@buf[tid])[15] <= 126 ? ((uint8*)@buf[tid])[15] : 46);
+                      printf("%c", ((uint8*)@buf[tid])[16] >= 32 && ((uint8*)@buf[tid])[16] <= 126 ? ((uint8*)@buf[tid])[16] : 46);
+                      printf("%c", ((uint8*)@buf[tid])[17] >= 32 && ((uint8*)@buf[tid])[17] <= 126 ? ((uint8*)@buf[tid])[17] : 46);
+                      printf("%c", ((uint8*)@buf[tid])[18] >= 32 && ((uint8*)@buf[tid])[18] <= 126 ? ((uint8*)@buf[tid])[18] : 46);
+                      printf("%c", ((uint8*)@buf[tid])[19] >= 32 && ((uint8*)@buf[tid])[19] <= 126 ? ((uint8*)@buf[tid])[19] : 46);
+             printf("\n");
+
+    }
     delete(@start[tid]);
     delete(@proc_name[tid]);
+    delete(@fd[tid]);
+    delete(@buf[tid]);
 }
+
+
+
