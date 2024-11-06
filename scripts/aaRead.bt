@@ -1,0 +1,22 @@
+#define TARGET_PID 14760
+
+
+
+
+tracepoint:syscalls:sys_enter_read
+/ pid == TARGET_PID /
+{
+    @start[tid] = nsecs;
+    @proc_name[tid] = comm;
+}
+
+tracepoint:syscalls:sys_exit_read
+/ @start[tid] && pid == TARGET_PID  /
+{
+    $duration = nsecs - @start[tid];
+    // if (@proc_name[tid] != "reactor-http-ep") {
+        printf("{ \"pid\": %d, \"process\": \"%s\", \"duration_ns\": %lld }\n", pid, @proc_name[tid], $duration);
+    // }
+    delete(@start[tid]);
+    delete(@proc_name[tid]);
+}

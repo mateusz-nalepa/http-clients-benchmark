@@ -17,3 +17,9 @@ More RPS for `script1.main.kts`
 
 # Grafana Screenshot
 ![grafana.png](images/grafana.png)
+
+
+https://github.com/pniewiejski/learn-io-polling?tab=readme-ov-file
+
+// tutaj jest info o wielu klientach http xd
+https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/
