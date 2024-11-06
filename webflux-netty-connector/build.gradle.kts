@@ -19,22 +19,22 @@ repositories {
 }
 
 dependencies {
-	implementation("io.micrometer:micrometer-registry-prometheus:1.13.1")
+	implementation("io.micrometer:micrometer-registry-prometheus:1.13.6")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
-	implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.5")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("io.projectreactor:reactor-test")
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+//	testImplementation("org.springframework.boot:spring-boot-starter-test")
+//	testImplementation("io.projectreactor:reactor-test")
+//	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+//	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-	implementation("io.micrometer:micrometer-tracing:1.3.1")
-	implementation("io.netty.incubator:netty-incubator-transport-native-io_uring:0.0.25.Final")
-	implementation("io.netty:netty-transport-native-kqueue:4.1.111.Final")
-	implementation("io.projectreactor.addons:reactor-pool-micrometer:0.1.6")
+//	implementation("io.micrometer:micrometer-tracing:1.3.1")
+//	implementation("io.netty.incubator:netty-incubator-transport-native-io_uring:0.0.25.Final")
+//	implementation("io.netty:netty-transport-native-kqueue:4.1.111.Final")
+//	implementation("io.projectreactor.addons:reactor-pool-micrometer:0.1.6")
 }
 
 kotlin {

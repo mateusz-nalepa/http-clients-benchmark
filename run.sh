@@ -72,3 +72,8 @@ wait_for_port $NETTY_PORT_TWO
 
 echo "Apps started!"
 
+ -Dserver.port=8091
+
+
+ -DisUseDedicatedThreadsPerClient=true -DmemoryAllocatorType=pooled -DmockServerPort=8091 -Dserver.port=8081 -Xms1024m -Xmx1024m
+ -DisUseDedicatedThreadsPerClient=false -DmemoryAllocatorType=pooled -DmockServerPort=8091 -Dserver.port=8082 -Xms1024m -Xmx1024m

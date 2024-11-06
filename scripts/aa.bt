@@ -4,26 +4,32 @@ tracepoint:syscalls:sys_enter_epoll_wait
 / pid == TARGET_PID /
 {
     @start[tid] = nsecs;
+    @proc_name[tid] = comm;
 }
 
 tracepoint:syscalls:sys_exit_epoll_wait
 / @start[tid] && pid == TARGET_PID /
 {
     $duration = nsecs - @start[tid];
-    printf("{ \"pid\": %d, \"event\": \"epoll_wait\", \"duration_ns\": %lld }\n", pid, $duration);
+    $proc_name = @proc_name[tid];
+    printf("{ \"pid\": %d, \"process\": \"%s\", \"event\": \"epoll_wait\", \"duration_ns\": %lld }\n", pid, $proc_name, $duration);
     delete(@start[tid]);
+    delete(@proc_name[tid]);
 }
 
 tracepoint:syscalls:sys_enter_epoll_ctl
 / pid == TARGET_PID /
 {
     @start_ctl[tid] = nsecs;
+    @proc_name_ctl[tid] = comm;
 }
 
 tracepoint:syscalls:sys_exit_epoll_ctl
 / @start_ctl[tid] && pid == TARGET_PID /
 {
     $duration_ctl = nsecs - @start_ctl[tid];
-    printf("{ \"pid\": %d, \"event\": \"epoll_ctl\", \"duration_ns\": %lld }\n", pid, $duration_ctl);
+    $proc_name_ctl = @proc_name_ctl[tid];
+    printf("{ \"pid\": %d, \"process\": \"%s\", \"event\": \"epoll_ctl\", \"duration_ns\": %lld }\n", pid, $proc_name_ctl, $duration_ctl);
     delete(@start_ctl[tid]);
+    delete(@proc_name_ctl[tid]);
 }
