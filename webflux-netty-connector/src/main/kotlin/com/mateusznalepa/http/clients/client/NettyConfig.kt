@@ -56,7 +56,7 @@ class NettyConfig(
             true -> {
                 val reactorRequestFactory = ReactorResourceFactory().apply {
                     connectionProvider = connectionProviderBuilder.build()
-                    loopResources = LoopResources.create("http-loop-$number-pool-")
+                    loopResources = LoopResources.create("$number-l-")
                 }
 
                 return ReactorClientHttpConnector(reactorRequestFactory, clientCustomization)
@@ -73,6 +73,6 @@ class NettyConfig(
         }
     }
 
-    val sharedLoopResources = LoopResources.create("http-loop-XD-pool-")
+    val sharedLoopResources = LoopResources.create("l-")
 
 }

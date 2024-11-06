@@ -1,4 +1,4 @@
-#define TARGET_PID 14760
+#define TARGET_PID 14562
 
 
 tracepoint:syscalls:sys_enter_epoll_wait
@@ -6,17 +6,15 @@ tracepoint:syscalls:sys_enter_epoll_wait
 {
     @start[tid] = nsecs;
     @proc_name[tid] = comm;
-    @xdTimeout[tid] = args->timeout;
 }
 
 tracepoint:syscalls:sys_exit_epoll_wait
 / @start[tid] && pid == TARGET_PID /
 {
     $duration = nsecs - @start[tid];
-    printf("{ \"pid\": %d, \"process\": \"%s\", \"event\": \"epoll_wait\", \"timeout\": \"%d\", \"duration_ns\": %lld }\n", pid, @proc_name[tid], @xdTimeout[tid], $duration);
+    printf("{ \"pid\": %d, \"process\": \"%s\", \"event\": \"epoll_wait\", \"duration_ns\": %lld }\n", pid, @proc_name[tid], $duration);
     delete(@start[tid]);
     delete(@proc_name[tid]);
-    delete(@xdTimeout[tid]);
 }
 
 tracepoint:syscalls:sys_enter_epoll_ctl
