@@ -32,9 +32,9 @@ class MockServerEndpoint {
     @GetMapping("/mock-server/{id}",)
     fun stub(@PathVariable id: Int): Mono<out ResponseEntity<out Any>> =
         Mono
-//            .just(ResponseEntity.ok(ultraSmallResponses[id]))
+            .just(ResponseEntity.ok(ultraSmallResponses[id]))
 //            .just(ResponseEntity.ok(responses[id]))
-            .just(ResponseEntity.ok(responses[1]))
+//            .just(ResponseEntity.ok(responses[1]))
 //            .just(ResponseEntity.ok(uberResponses[id]))
             .delayElement(Duration.ofMillis(id * 10L))
 
