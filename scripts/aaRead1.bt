@@ -1,4 +1,4 @@
-#define TARGET_PID 28462
+#define TARGET_PID 32405
 
 
 kprobe:__x64_sys_recvfrom
@@ -19,6 +19,10 @@ kretprobe:__x64_sys_recvfrom
         if (@proc_name[tid] != "reactor-http-ep") {
             //printf("{\"RECVFROMthread\": \"%s\", \"recv_duration_ns\": %lld, \"fd\": %d, \"bytes_received\": %d}\n", @proc_name[tid], $duration, @fd[tid], retval);
         }
+
+    if ((strncmp(@proc_name[tid], "l", 0) == 0) ) {
+        @czas_czytania = hist($duration);
+    }
 
     delete(@start[tid]);
     delete(@fd[tid]);
@@ -61,7 +65,43 @@ kprobe:mutex_unlock
 / @start[tid] /
 {
     $duration = nsecs - @start[tid];
-    printf("PROCNAME: %s, mutex locked for %lld ns\n", @proc_name[tid], $duration);
+    //printf("PROCNAME: %s, mutex locked for %lld ns\n", @proc_name[tid], $duration);
+    //if ((strncmp(@proc_name[tid], "l", 0) == 0) ) {
+        @czas_lockow = hist($duration);
+    //}
     delete(@start[tid]);
     delete(@proc_name[tid]);
+}
+
+
+tracepoint:sched:sched_switch
+/ pid == TARGET_PID /
+{
+    @start[tid] = nsecs;
+    @proc_name[tid] = comm;
+}
+
+tracepoint:sched:sched_switch
+/ @start[tid] && pid == TARGET_PID /
+{
+    $duration = nsecs - @start[tid];
+    //if ($retval != 0 && $retval != 1 && @proc_name[tid] != "reactor-http-ep") {
+        //printf("{ \"SWITCH_pid\": %d, \"process\": \"%s\", \"duration_ns\": %lld }\n", pid, @proc_name[tid],  $duration);
+    //}
+    //if ((strncmp(@proc_name[tid], "l", 0) == 0) ) {
+        @czas_switcha = hist($duration);
+    //}
+    delete(@start[tid]);
+    delete(@proc_name[tid]);
+}
+
+END {
+    printf("Czas switcha\n");
+    print(@czas_switcha);
+
+        printf("\nCzas czytania\n");
+        print(@czas_czytania);
+
+        printf("\nCzas lockow\n");
+        print(@czas_lockow);
 }
