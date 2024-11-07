@@ -3,10 +3,10 @@ package com.mateusznalepa.http.clients.api
 
 val ultraSmallResponses: Map<Int, String> = mapOf(
     1 to """1""",
-    2 to """2""",
-    3 to """3""",
-    4 to """4""",
-    5 to """5""",
+    2 to """2222222222""",
+    3 to """33333333333333333333""",
+    4 to """4444444444444444444444444444444444444444""",
+    5 to """55555555555555555555555555555555555555555555555555555555555555555555555555555555""",
 )
 
 val responses: Map<Int, String> = mapOf(

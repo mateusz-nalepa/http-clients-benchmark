@@ -21,7 +21,7 @@ class NettyConfig(
     private val memoryAllocatorType: String,
 ) {
 
-    fun createClient(number: Int): ReactorClientHttpConnector {
+    fun createClient(number: Int, size: String): ReactorClientHttpConnector {
         val maxConnections = 500
 
         val connectionProviderBuilder =
@@ -56,7 +56,7 @@ class NettyConfig(
             true -> {
                 val reactorRequestFactory = ReactorResourceFactory().apply {
                     connectionProvider = connectionProviderBuilder.build()
-                    loopResources = LoopResources.create("$number-l-")
+                    loopResources = LoopResources.create("${size}P-$number-")
                 }
 
                 return ReactorClientHttpConnector(reactorRequestFactory, clientCustomization)
@@ -73,6 +73,7 @@ class NettyConfig(
         }
     }
 
-    val sharedLoopResources = LoopResources.create("l-")
+//    val sharedLoopResources = LoopResources.create("LP-")
+    val sharedLoopResources = LoopResources.create("LP-", 800, true)
 
 }

@@ -1,0 +1,160 @@
+#define TARGET_PID 195213
+
+
+
+
+kprobe:__x64_sys_recvfrom
+/ pid == TARGET_PID /
+{
+    @start[tid] = nsecs;
+    @proc_name[tid] = comm;
+    @fd[tid] = arg0;
+    @buf[tid] = arg1;
+    @cpu_start[tid] = cpu;
+}
+
+
+kretprobe:__x64_sys_recvfrom
+/// @start[tid] && retval > 0 /
+/ @start[tid] && pid == TARGET_PID /
+{
+    $duration = nsecs - @start[tid];
+    $first_char = (int8*)@proc_name[tid];
+    $nazwa = @proc_name[tid];
+
+    //if (@proc_name[tid] == "reactor-http-ep") {
+        //printf("{ \"thread\": \"%s\", \"option\": \"recvfromxx\", \"duratioNs\": %lld, \"result\": %d}\n", comm, $duration, retval);
+        @czas_czytania = hist($duration);
+    //}
+
+    if (@proc_name[tid] == "reactor-http-ep") {
+       // printf("\n");
+    }
+
+    delete(@start[tid]);
+    delete(@fd[tid]);
+    delete(@buf[tid]);
+}
+
+tracepoint:syscalls:sys_enter_epoll_wait
+/ pid == TARGET_PID /
+{
+    @start[tid] = nsecs;
+    @proc_name[tid] = comm;
+    @xdTimeout[tid] = args->timeout;
+    @xdMaxEvents[tid] = args->maxevents;
+}
+
+tracepoint:syscalls:sys_exit_epoll_wait
+/ @start[tid] && pid == TARGET_PID /
+{
+    $duration = nsecs - @start[tid];
+    $nazwa = @proc_name[tid];
+    $retval = args->ret;
+
+    //if ($retval != 0 && $retval != 1 &&  @proc_name[tid] == "reactor-http-ep") {
+    //if ($retval != 0 && $retval != 1) {
+        //printf("{ \"cpu_core\": \"%d\", \"thread\": \"%s\", \"Option\": \"epollwai\", \"duratioNs\": %lld , \"epoll_wait_pid\": %d,  \"event\": \"epoll_wait\", \"maxEvents\": \"%d\", \"timeout\": \"%d\", \"result\": \"%d\" }\n", cpu, @proc_name[tid], $duration, pid,  @xdMaxEvents[tid],  @xdTimeout[tid], $retval);
+        //printf("{ \"cpu_core\": %lld }\n", $retval);
+    //}
+    delete(@start[tid]);
+    delete(@proc_name[tid]);
+    delete(@xdTimeout[tid]);
+    delete(@xdMaxEvents[tid]);
+}
+
+
+kprobe:mutex_lock
+/ pid == TARGET_PID /
+{
+    @start[tid] = nsecs;
+        @proc_name[tid] = comm;
+
+}
+
+kprobe:mutex_unlock
+/ @start[tid] && pid == TARGET_PID /
+{
+    $duration = nsecs - @start[tid];
+
+    //if (@proc_name[tid] == "reactor-http-ep" ) {
+        //printf("{ \"cpu_core\": \"%d\", \"thread\": \"%s\", \"Option\": \"mutexxxx\", \"duratioNs\": %lld }\n", cpu, @proc_name[tid],  $duration);
+
+        @czas_lockow = hist($duration);
+    //}
+
+    delete(@start[tid]);
+    delete(@proc_name[tid]);
+}
+
+
+tracepoint:sched:sched_switch
+/// pid == TARGET_PID /
+{
+    @start[tid] = nsecs;
+    @proc_name[tid] = comm;
+    @cpu_start[tid] = cpu;
+}
+
+tracepoint:sched:sched_switch
+/// @start[tid] && pid == TARGET_PID /
+{
+    $duration = nsecs - @start[tid];
+    $nazwa = @proc_name[tid];
+    $znak = (uint8*)$nazwa;
+
+    //if (@proc_name[tid] == "reactor-http-ep" ) {
+        //printf("{ \"cpu_start\": \"%d\", \"cpu_end\": \"%d\", \"thread\": \"%s\", \"thread_end\": \"%s\", \"Option\": \"sched_sw\", \"duratioNs\": %lld , \"switchPid\": %d }\n", @cpu_start[tid], cpu,  @proc_name[tid], comm, $duration, pid );
+        //printf("{ \"thread\": \"%s\", \"option\": \"sched_switch\", \"duratioNs\": %lld , \"result\": %lld, \"prev\": \"%s\", \"prev_pid\": \"%d\", \"next\": \"%s\", \"next_pid\": \"%d\" }\n", @proc_name[tid] , $duration, $duration, args->prev_comm, args->prev_pid, args->next_comm, args->next_pid);
+         //printf("Zadanie wstrzymane: %s (PID: %d)\n", args->prev_comm, args->prev_pid);
+         //printf("Zadanie uruchomione: %s (PID: %d)\n", args->next_comm, args->next_pid);
+        @czas_switcha = hist($duration);
+    //}
+
+ if (args->prev_pid != args->next_pid) {
+    printf("Przełączono z PID: %d (%s) do PID: %d (%s)\n", args->prev_pid, args->prev_comm, args->next_pid, args->next_comm);
+ } // Sprawdź, czy PID-y są takie same else
+ if (args->prev_pid == args->next_pid) {
+    //printf("Kontekst przełączono na PID: %d (%s)\n", args->prev_pid, args->prev_comm);
+  }
+
+    delete(@start[tid]);
+    delete(@proc_name[tid]);
+}
+
+tracepoint:sched:sched_migrate_task
+{
+    printf("Proces: %s (PID: %d) migrował z CPU: %d do CPU: %d o czasie: %lld ns\n",
+           args->comm, args->pid, args->orig_cpu, args->dest_cpu, nsecs);
+}
+
+
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:epoll_wait
+/ pid == TARGET_PID /
+{
+   @start[tid] = nsecs;
+}
+
+uretprobe:/lib/x86_64-linux-gnu/libc.so.6:epoll_wait
+/ @start[tid] /
+{
+    // Pobieranie wartości zwróconej przez epoll_wait
+    $result = retval;
+    $duration = nsecs - @start[tid];
+    //if ($result != 0 && $result != 1) {
+        //printf("{ \"thread\": \"%s\", \"option\": \"epoll_wait\", \"duratioNs\": %lld , \"result\": %d }\n", comm, $duration, $result );
+    //}
+    delete(@start[tid]);
+}
+END {
+
+
+    printf("Czas switcha\n");
+    print(@czas_switcha);
+
+    printf("\nCzas czytania\n");
+    print(@czas_czytania);
+
+    printf("\nCzas lockow\n");
+    print(@czas_lockow);
+}

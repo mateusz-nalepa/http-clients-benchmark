@@ -9,6 +9,7 @@ import java.time.Duration
 class DummyClient(
     private val webClient: WebClient,
     private val mockServerPort: String,
+    private val size: String,
 ) {
 
 
@@ -16,7 +17,7 @@ class DummyClient(
         val startDummyClient = System.nanoTime()
 
         return webClient.get()
-            .uri(URI.create("http://localhost:$mockServerPort/mock-server/$id"))
+            .uri(URI.create("http://localhost:$mockServerPort/mock-server/$id/$size"))
             .retrieve()
             .bodyToMono(String::class.java)
 //            .toFuture()

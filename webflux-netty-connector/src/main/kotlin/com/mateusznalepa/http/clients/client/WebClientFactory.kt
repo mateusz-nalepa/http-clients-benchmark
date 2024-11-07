@@ -6,7 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient
 
 
 interface WebClientFactory {
-    fun createWebClient(number: Int): WebClient
+    fun createWebClient(number: Int, size: String): WebClient
 }
 
 @Component
@@ -15,13 +15,13 @@ class NettyWebClientFactory(
     private val nettyConfig: NettyConfig,
 ) : WebClientFactory {
 
-    override fun createWebClient(number: Int): WebClient =
+    override fun createWebClient(number: Int, size: String): WebClient =
         webClientBuilder
-            .clientConnector(createConnector(number))
+            .clientConnector(createConnector(number, size))
             .build()
 
-    fun createConnector(number: Int): ClientHttpConnector =
-        nettyConfig.createClient(number)
+    fun createConnector(number: Int, size: String): ClientHttpConnector =
+        nettyConfig.createClient(number, size)
 
 }
 

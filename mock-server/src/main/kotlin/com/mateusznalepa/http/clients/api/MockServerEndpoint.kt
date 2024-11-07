@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import java.time.Duration
+import kotlin.random.Random
 
 val uberResponses = mapOf(
     1 to uberResponse(1),
@@ -19,7 +20,7 @@ private fun uberResponse(int: Number): String {
 
     val uber = StringBuilder()
 
-    (0..1).map {
+    (0..2).map {
         uber.append(responses[int])
     }
 
@@ -29,14 +30,25 @@ private fun uberResponse(int: Number): String {
 @RestController
 class MockServerEndpoint {
 
-    @GetMapping("/mock-server/{id}",)
-    fun stub(@PathVariable id: Int): Mono<out ResponseEntity<out Any>> =
+    @GetMapping("/mock-server/{id}/{size}",)
+    fun stub(@PathVariable id: Int, @PathVariable size: String): Mono<out ResponseEntity<out Any>> =
         Mono
-//            .just(ResponseEntity.ok(ultraSmallResponses[id]))
-            .just(ResponseEntity.ok(responses[id]))
+
+//            .just(ResponseEntity.ok(ultraSmallResponses[Random.nextInt(1, 5).also { println(it) }]))
+//            .just(ResponseEntity.ok(responses[id].also { println(id) }))
+            .just(ResponseEntity.ok(response(size, id)))
 //            .just(ResponseEntity.ok(uberResponses[id]))
+//            .just(ResponseEntity.ok(response()))
             .delayElement(Duration.ofMillis(id * 10L))
 
+
+    private fun response(size: String, id: Int):String? =
+        when(size) {
+            "s"-> ultraSmallResponses[id]
+            "m"-> responses[id]
+            "l"-> uberResponses[id]
+            else-> throw RuntimeException("XD")
+        }
 }
 
 //5519

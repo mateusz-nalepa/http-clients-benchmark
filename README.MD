@@ -23,3 +23,7 @@ https://github.com/pniewiejski/learn-io-polling?tab=readme-ov-file
 
 // tutaj jest info o wielu klientach http xd
 https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/
+
+
+https://explog.in/notes/sched.html
+https://github.com/torvalds/linux/blob/v5.4/include/trace/events/sched.h

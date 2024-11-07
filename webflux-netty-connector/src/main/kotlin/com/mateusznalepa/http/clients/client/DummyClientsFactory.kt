@@ -14,20 +14,28 @@ class DummyClientsFactory(
 ) {
 
     @Bean
-    fun dummyClients(): List<DummyClient> =
-        (1..100)
-            .map {
-                val dummyClient = dummyClient(it)
-                beanFactory.initializeBean(dummyClient, "dummyClient$it")
-                beanFactory.autowireBean(dummyClient)
-                beanFactory.registerSingleton("dummyClient$it", dummyClient)
-                dummyClient
-            }
+    fun dummyClientsSmall(): List<DummyClient>  {
+        val clients = mutableListOf<DummyClient>()
+//        clients.addAll((1..40).map { dummyClientBean(it, "s") })
+//        clients.addAll((1..50).map { dummyClientBean(it, "m") })
+//        clients.addAll((1..5).map { dummyClientBean(it, "l") })
+        clients.addAll((1..100).map { dummyClientBean(it, "m") })
+        return clients
+    }
 
-    private fun dummyClient(number: Int): DummyClient =
+    private fun dummyClientBean(it: Int, size: String): DummyClient {
+        val dummyClient = dummyClient(it, size)
+        beanFactory.initializeBean(dummyClient, "dummyClient$it$size")
+        beanFactory.autowireBean(dummyClient)
+        beanFactory.registerSingleton("dummyClient$it$size", dummyClient)
+        return dummyClient
+    }
+
+    private fun dummyClient(number: Int, size: String): DummyClient =
         DummyClient(
-            webClient = webClientFactory.createWebClient(number),
+            webClient = webClientFactory.createWebClient(number, size),
             mockServerPort = mockServerPort,
+            size = size,
         )
 
 }
