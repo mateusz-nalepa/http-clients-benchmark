@@ -1,34 +1,24 @@
-#define TARGET_PID 14760
+#define TARGET_PID 22122
 
 
 
 
-tracepoint:syscalls:sys_enter_read
+tracepoint:syscalls:sys_enter_recvfrom
 / pid == TARGET_PID /
 {
     @start[tid] = nsecs;
     @proc_name[tid] = comm;
     @fd[tid] = args->fd;
-    @buf[tid] = args->buf;
+    //@buf[tid] = args->buf;
 }
 
-tracepoint:syscalls:sys_exit_read
+tracepoint:syscalls:sys_exit_recvfrom
 / @start[tid] && pid == TARGET_PID  /
 {
     $duration = nsecs - @start[tid];
-    $retval = args->ret;
-    if ($retval > 0) {
+    //$retval = args->ret;
+
         printf("{ \"pid\": %d, \"process\": \"%s\", \"odczytano\": \"%d\", \"duration_ns\": %lld }\n", pid, @proc_name[tid], @fd[tid], $duration);
-
-        $bytes = $retval > 64 ? 64 : $retval; // Ogranicz wyświetlanie do 16 bajtów
-        $xd = 0;
-        //printf("XD TO %d \n", $xd);
-
-        // while($xd < $bytes) {
-        //     //printf("%d", $xd);
-        //     printf("%c", ((uint8*)@buf[tid])[$xd] >= 32 && ((uint8*)@buf[tid])[$xd] <= 126 ? ((uint8*)@buf[tid])[$xd] : 46);
-        //     $xd = $xd + 1;
-        // }
 
            printf("%c", ((uint8*)@buf[tid])[0] >= 32 && ((uint8*)@buf[tid])[0] <= 126 ? ((uint8*)@buf[tid])[0] : 46);
            printf("%c", ((uint8*)@buf[tid])[1] >= 32 && ((uint8*)@buf[tid])[1] <= 126 ? ((uint8*)@buf[tid])[1] : 46);
@@ -52,11 +42,11 @@ tracepoint:syscalls:sys_exit_read
                       printf("%c", ((uint8*)@buf[tid])[19] >= 32 && ((uint8*)@buf[tid])[19] <= 126 ? ((uint8*)@buf[tid])[19] : 46);
              printf("\n");
 
-    }
+
     delete(@start[tid]);
     delete(@proc_name[tid]);
     delete(@fd[tid]);
-    delete(@buf[tid]);
+    //delete(@buf[tid]);
 }
 
 

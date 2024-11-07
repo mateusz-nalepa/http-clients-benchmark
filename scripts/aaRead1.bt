@@ -1,0 +1,63 @@
+#define TARGET_PID 26289
+
+
+kprobe:__x64_sys_recvfrom
+/ pid == TARGET_PID /
+{
+    @start[tid] = nsecs;
+    @proc_name[tid] = comm;
+    @fd[tid] = arg0;
+    @buf[tid] = arg1;
+}
+
+
+kretprobe:__x64_sys_recvfrom
+/ @start[tid] && retval > 0 /
+{
+    $duration = nsecs - @start[tid];
+    //printf("Watek: %s recv duration: %lld ns, fd: %d, bytes received: %d\n", @proc_name[tid], $duration, @fd[tid], retval);
+printf("{\"thread\": \"%s\", \"recv_duration_ns\": %lld, \"fd\": %d, \"bytes_received\": %d}\n", @proc_name[tid], $duration, @fd[tid], retval);
+
+
+    //printf("dlugosc: %d \n", @buf[tid]);
+
+  // printf("%02x ", ((uint8 *)@buf[tid])[60]);
+  //printf("%c", ((uint8*)@buf[tid])[60] >= 32 && ((uint8*)@buf[tid])[60] <= 126 ? ((uint8*)@buf[tid])[60] : 46);
+
+       //         printf("%c", ((uint8*)@buf[tid])[1000] >= 32 && ((uint8*)@buf[tid])[1000] <= 126 ? ((uint8*)@buf[tid])[1000] : 46);
+
+     //printf("%02x ", ((uint8*)@buf[tid])[1000]);
+     //printf("%02x ", ((uint8*)@buf[tid])[2]);
+     //printf("%02x ", ((uint8*)@buf[tid])[3]);
+     //printf("%02x ", ((uint8*)@buf[tid])[4]);
+     //printf("%02x ", ((uint8*)@buf[tid])[5]);
+     //printf("%02x ", ((uint8*)@buf[tid])[6]);
+     //printf("%02x ", ((uint8*)@buf[tid])[7]);
+     //printf("%02x ", ((uint8*)@buf[tid])[8]);
+     //printf("%02x ", ((uint8*)@buf[tid])[9]);
+     //printf("%02x ", ((uint8*)@buf[tid])[10]);
+     //printf("%02x ", ((uint8*)@buf[tid])[11]);
+     //printf("%02x ", ((uint8*)@buf[tid])[12]);
+     //printf("%02x ", ((uint8*)@buf[tid])[13]);
+     //printf("%02x ", ((uint8*)@buf[tid])[14]);
+     //printf("%02x ", ((uint8*)@buf[tid])[15]);
+     //printf("%02x ", ((uint8*)@buf[tid])[16]);
+     //printf("%02x ", ((uint8*)@buf[tid])[17]);
+     //printf("%02x ", ((uint8*)@buf[tid])[18]);
+     //printf("%02x ", ((uint8*)@buf[tid])[19]);
+     //printf("%02x ", ((uint8*)@buf[tid])[20]);
+     //printf("%02x ", ((uint8*)@buf[tid])[21]);
+     //printf("%02x ", ((uint8*)@buf[tid])[22]);
+     //printf("%02x ", ((uint8*)@buf[tid])[23]);
+     //printf("%02x ", ((uint8*)@buf[tid])[24]);
+     //printf("%02x ", ((uint8*)@buf[tid])[25]);
+     //printf("%02x ", ((uint8*)@buf[tid])[26]);
+     //printf("%02x ", ((uint8*)@buf[tid])[27]);
+     //printf("%02x ", ((uint8*)@buf[tid])[28]);
+     //printf("%02x ", ((uint8*)@buf[tid])[29]);
+     printf("\n");
+
+    delete(@start[tid]);
+    delete(@fd[tid]);
+    delete(@buf[tid]);
+}
