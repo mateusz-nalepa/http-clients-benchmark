@@ -27,3 +27,8 @@ https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/
 
 https://explog.in/notes/sched.html
 https://github.com/torvalds/linux/blob/v5.4/include/trace/events/sched.h
+
+
+-DisUseDedicatedThreadsPerClient=true -DmemoryAllocatorType=pooled -DmockServerPort=8091 -Dserver.port=8081 -Xms1024m -Xmx1024m -DthreadsForResponse=true
+
+-DisUseDedicatedThreadsPerClient=true -DmemoryAllocatorType=pooled -DmockServerPort=8091 -Dserver.port=8082 -Xms1024m -Xmx1024m -DthreadsForResponse=false
