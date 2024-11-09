@@ -30,6 +30,19 @@ private fun uberResponse(int: Number): String {
 @RestController
 class MockServerEndpoint {
 
+
+    @GetMapping()
+    fun stubaa(): Mono<out ResponseEntity<out Any>> =
+        Mono
+
+//            .just(ResponseEntity.ok(ultraSmallResponses[Random.nextInt(1, 5).also { println(it) }]))
+//            .just(ResponseEntity.ok(responses[id].also { println(id) }))
+            .just(ResponseEntity.ok("123456789EOF"))
+//            .just(ResponseEntity.ok(uberResponses[id]))
+//            .just(ResponseEntity.ok(response()))
+            .delayElement(Duration.ofMillis(10L))
+
+
     @GetMapping("/mock-server/{id}/{size}",)
     fun stub(@PathVariable id: Int, @PathVariable size: String): Mono<out ResponseEntity<out Any>> =
         Mono

@@ -467,9 +467,9 @@ public class EpollEventLoop extends SingleThreadEventLoop {
     private boolean processReady(EpollEventArray events, int ready) {
         var start = System.nanoTime();
         boolean timerFired = false;
-        if (ready > 10 && Thread.currentThread().getName().contains("http")) {
-            System.out.println("READY EVENTS: " + ready + " on thread: " + Thread.currentThread().getName());
-        }
+//        if (ready > 10 && Thread.currentThread().getName().contains("http")) {
+//            System.out.println("READY EVENTS: " + ready + " on thread: " + Thread.currentThread().getName());
+//        }
         for (int i = 0; i < ready; i ++) {
             final int fd = events.fd(i);
             if (fd == eventFd.intValue()) {

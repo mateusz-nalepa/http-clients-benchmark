@@ -57,7 +57,7 @@ object ScriptLogger {
 
 object ScriptParameters {
     const val SOURCE_DIRECTORY_WITH_FILES = "source11"
-    const val BATCH_SIZE = 20
+    const val BATCH_SIZE = 50
     const val APP_URL = "http://localhost:8081"
 }
 

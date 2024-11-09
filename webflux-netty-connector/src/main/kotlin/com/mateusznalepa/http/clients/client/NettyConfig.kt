@@ -73,7 +73,7 @@ class NettyConfig(
         }
     }
 
-//    val sharedLoopResources = LoopResources.create("LP-")
+//    val sharedLoopResoeurces = LoopResources.create("LP-")
     val sharedLoopResources = LoopResources.create("LP-", 800, true)
 
 }
