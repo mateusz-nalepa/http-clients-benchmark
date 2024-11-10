@@ -50,13 +50,18 @@ import java.time.Duration
 import java.time.LocalDateTime
 import kotlin.math.absoluteValue
 import kotlin.system.measureTimeMillis
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.client.ReactorResourceFactory
+import org.springframework.stereotype.Component
+import reactor.netty.resources.ConnectionProvider
+import reactor.netty.resources.LoopResources
 
 object ScriptLogger {
     val logger: Logger = org.slf4j.LoggerFactory.getLogger("LOG")
 }
 
 object ScriptParameters {
-    const val SOURCE_DIRECTORY_WITH_FILES = "source11"
+    const val SOURCE_DIRECTORY_WITH_FILES = "source1"
     const val BATCH_SIZE = 50
     const val APP_URL = "http://localhost:8081"
 }
@@ -204,6 +209,8 @@ object Client {
     private fun createWebClient(): WebClient {
         val size = 16 * 1024 * 1024
 
+        val sharedLoopResources = LoopResources.create("1-", 64, true)
+
         val strategies =
             ExchangeStrategies.builder()
                 .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(size) }
@@ -214,7 +221,22 @@ object Client {
             .trustManager(InsecureTrustManagerFactory.INSTANCE)
             .build()
             .let { sslContext -> HttpClient.create().secure { it.sslContext(sslContext) } }
-            .let { ReactorClientHttpConnector(it) }
+            .let {
+
+                val clientCustomization: (t: HttpClient) -> HttpClient = { client -> client }
+
+
+                val reactorRequestFactory = ReactorResourceFactory().apply {
+                    connectionProvider = ConnectionProvider
+                        .builder("send1-")
+                        .maxConnections(5000)
+                        .pendingAcquireMaxCount(5000 * 3)
+                        .build()
+                    loopResources = sharedLoopResources
+                }
+
+                ReactorClientHttpConnector(reactorRequestFactory, clientCustomization)
+            }
             .let {
                 WebClient
                     .builder()

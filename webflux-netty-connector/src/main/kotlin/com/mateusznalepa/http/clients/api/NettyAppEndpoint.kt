@@ -2,9 +2,17 @@ package com.mateusznalepa.http.clients.api
 
 import com.mateusznalepa.http.clients.client.DummyClient
 import io.micrometer.core.instrument.Metrics
+import io.netty.channel.EventLoopGroup
+import io.netty.channel.epoll.EpollEventLoopGroup
+import io.netty.channel.nio.NioEventLoopGroup
+import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.util.concurrent.FastThreadLocal
 import io.netty.util.internal.PlatformDependent
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.boot.web.embedded.netty.NettyServerCustomizer
+import org.springframework.context.annotation.Configuration
+import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
@@ -12,10 +20,49 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Scheduler
 import reactor.core.scheduler.Schedulers
+import reactor.netty.http.server.HttpServer
 import reactor.netty.resources.LoopResources
 import java.time.Duration
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicInteger
+
+
+//@ConditionalOnProperty("threadsForResponse", havingValue = "true")
+//@Configuration
+//class ConfigXD {
+//
+//    init {
+//        println("WESZLEM")
+//    }
+//
+//    @Bean
+//    fun reactorResourceFactory(): ReactorResourceFactory {
+//        val factory = ReactorResourceFactory()
+//        factory.isUseGlobalResources = false;
+//        factory.loopResources = LoopResources.create("xd", 16, true);
+//        return factory;
+//    }
+//}
+
+//@ConditionalOnProperty("threadsForResponse", havingValue = "true")
+//@Configuration
+//class ConfigXD {
+//
+//    init {
+//        println("WESZLEM")
+//    }
+//
+//    @Component
+//    @ConditionalOnProperty("threadsForResponse", havingValue = "true")
+//    class EventLoopNettyCustomizer : NettyServerCustomizer {
+//        override fun apply(httpServer: HttpServer): HttpServer {
+//            val eventLoopGroup: EventLoopGroup = EpollEventLoopGroup(32)
+//            println("config XD")
+//            return httpServer.runOn(eventLoopGroup)
+//        }
+//    }
+//}
+
 
 @RestController
 class NettyAppEndpoint(
@@ -23,6 +70,7 @@ class NettyAppEndpoint(
     @Value("\${threadsForResponse}")
     private val threadsForResponse: Boolean,
 ) {
+
 
 //    private val xd: Scheduler? =
 //        threadsForResponse
@@ -37,26 +85,20 @@ class NettyAppEndpoint(
 //            }
 
     private val xd: Scheduler? =
-        threadsForResponse
+        false
             .takeIf { it }
             ?.let {
                 LoopResources.create("response", 100, true).onServer(true)
             }
             ?.let { Schedulers.fromExecutorService(it) }
 
-    class CustomThreadFactory : ThreadFactory {
-        private val xd = AtomicInteger(0)
-        private val namePrefix = "response-";
 
-        override fun newThread(r: Runnable): Thread {
-            val thread = Thread(r, namePrefix + xd.getAndIncrement())
-            thread.setDaemon(true)
-            return thread
-        }
-    }
+
+
+    val asd = (0..1_000_0).map { it.toString() }.joinToString { it }
 
     @GetMapping("/dummy/{id}")
-    fun dummyValue(@PathVariable id: String): Mono<List<String>> {
+    fun dummyValuea(@PathVariable id: String): Mono<List<String>> {
         val startDummyValue = System.nanoTime()
         return Flux
             .fromIterable(dummyClients)
@@ -67,9 +109,35 @@ class NettyAppEndpoint(
                 val dummyValueDuration = Duration.ofNanos(endDummyValue - startDummyValue)
                 Metrics.timer("dummyValueDuration").record(dummyValueDuration)
             }
-            .threadsXDD()
+//            .threadsXDD()
 //            .map { "5" }
 
+    }
+//
+//
+//    @GetMapping("/dummy/{id}")
+//    fun dummyValuea(@PathVariable id: String): Mono<List<String>> {
+//        val startDummyValue = System.nanoTime()
+//        return Flux
+//            .fromIterable((0..100).toList())
+//            .flatMap { Mono.just(asd) }
+////            .threadsXDD()
+//            .collectList() // ta linijka jest najbardziej kluczwa w tym wszystkim XDD
+//            .doOnNext {
+//                val endDummyValue = System.nanoTime()
+//                val dummyValueDuration = Duration.ofNanos(endDummyValue - startDummyValue)
+//                Metrics.timer("dummyValueDuration").record(dummyValueDuration)
+//            }
+//
+////            .threadsXDD()
+////            .map { "5" }
+//    }
+
+    private fun <T> Flux<T>.threadsXDD(): Flux<T> {
+        if (threadsForResponse) {
+            return this.publishOn(xd!!)
+        }
+        return this
     }
 
     private fun <T> Mono<T>.threadsXDD(): Mono<T> {
@@ -93,4 +161,15 @@ object Klasa {
                 return PlatformDependent.allocateUninitializedArray(MAX_TL_ARRAY_LEN)
             }
         }
+}
+
+class CustomThreadFactory : ThreadFactory {
+    private val xd = AtomicInteger(0)
+    private val namePrefix = "res-";
+
+    override fun newThread(r: Runnable): Thread {
+        val thread = Thread(r, namePrefix + xd.getAndIncrement())
+        thread.setDaemon(true)
+        return thread
+    }
 }

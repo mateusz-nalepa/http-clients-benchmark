@@ -1,97 +1,80 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+#include <unistd.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
-#include <unistd.h>
-#include <time.h>
 #include <errno.h>
+#include <time.h>
 
 #define PORT 12345
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 16384
+
+void set_nonblocking(int sockfd) {
+    int flags = fcntl(sockfd, F_GETFL, 0);
+    fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
+}
 
 int main() {
-            printf("Hello World\n");
-
-    int sockfd;
-    struct sockaddr_in servaddr, cliaddr;
-    char buffer[BUFFER_SIZE];
-    ssize_t bytes_received;
-    socklen_t len = sizeof(cliaddr);
+    int client_fd;
+    struct sockaddr_in server_addr;
+    char buffer[BUFFER_SIZE] = "Hello from client!";
+    char recv_buffer[BUFFER_SIZE];
     struct timespec start, end;
-    double time_spent;
+    socklen_t addr_len = sizeof(server_addr);
 
-    // Tworzenie gniazda
-    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-    if (sockfd < 0) {
-        perror("socket creation failed");
+    // Tworzenie gniazda plikowego
+    if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) == 0) {
+        perror("socket failed");
         exit(EXIT_FAILURE);
     }
 
-    // Ustawienie gniazda na tryb nieblokujący
-    int flags = fcntl(sockfd, F_GETFL, 0);
-    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) < 0) {
-        perror("fcntl failed");
-        close(sockfd);
-        exit(EXIT_FAILURE);
-    }
+    // Ustawienia adresu
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server_addr.sin_port = htons(PORT);
 
-    memset(&servaddr, 0, sizeof(servaddr));
-    memset(&cliaddr, 0, sizeof(cliaddr));
+    // Ustawienie gniazda w tryb nieblokujący
+     set_nonblocking(client_fd);
 
-    // Ustawienia serwera
-    servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(PORT);
-    servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    // Mierzenie czasu rozpoczęcia
 
-    // Bindowanie gniazda
-    if (bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
-        perror("bind failed");
-        close(sockfd);
-        exit(EXIT_FAILURE);
-    }
+    // Wysłanie wiadomości do serwera
+    sendto(client_fd, buffer, strlen(buffer), 0, (struct sockaddr *)&server_addr, addr_len);
 
-    while (1) {
-
-        // Mierzenie czasu odbierania danych
+    // Oczekiwanie na odpowiedź w trybie nieblokującym
+    int bytes_received = -1;
+    while (bytes_received < 0) {
         clock_gettime(CLOCK_MONOTONIC, &start);
-        bytes_received = recvfrom(sockfd, buffer, BUFFER_SIZE - 1, 0, (struct sockaddr *)&cliaddr, &len);
+
+        bytes_received = recvfrom(client_fd, recv_buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
+
         clock_gettime(CLOCK_MONOTONIC, &end);
 
-        if (bytes_received < 0) {
-            if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                // Brak danych do odebrania, kontynuowanie pętli
-                usleep(100000); // Przerwa 100ms przed kolejną próbą
-                                        printf("EAGAIN\n");
+        double elapsed_time = (end.tv_sec - start.tv_sec) * 1000.0; // sekundy na milisekundy
+        elapsed_time += (end.tv_nsec - start.tv_nsec) / 1000000.0; // nanosekundy na milisekundy
+        printf("Czas odpowiedzi: %.3f ms\n", elapsed_time);
 
-                continue;
-            } else {
+        if (bytes_received < 0) {
+            if (errno != EWOULDBLOCK && errno != EAGAIN) {
                 perror("recvfrom failed");
-                close(sockfd);
+                close(client_fd);
                 exit(EXIT_FAILURE);
             }
         }
-
-        // Obliczanie czasu
-        time_spent = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
-        buffer[bytes_received] = '\0'; // Upewnienie się, że bufor jest zakończony zerem
-        printf("Odebrano %ld bajtów w czasie %.9f sekund\n", bytes_received, time_spent);
-        printf("Dane: %s\n", buffer);
-
-        // Sprawdzanie znaku końca
-        if (strstr(buffer, "EOF") != NULL) {
-            printf("Odebrano wszystkie dane.\n");
-            break;
+        //usleep(10000); // 10 ms delay to prevent busy-waiting
+        if (bytes_received < 0) {
+            printf("Ide spac na 1s...\n");
+            sleep(1); // 10 ms delay to prevent busy-waiting
         }
-
-        // Resetowanie bufora
-        memset(buffer, 0, BUFFER_SIZE);
     }
 
-    // Zamykanie gniazda
-    close(sockfd);
+    recv_buffer[bytes_received] = '\0'; // Dodanie null-terminatora
+//    printf("Otrzymano od serwera: %s\n", recv_buffer);
+    printf("Otrzymano od serwera bajtow: %d\n", bytes_received);
+//    printf("Czas odpowiedzi: %.3f ms\n", elapsed_time);
+
+    // Zamknięcie gniazda
+    close(client_fd);
     return 0;
 }
