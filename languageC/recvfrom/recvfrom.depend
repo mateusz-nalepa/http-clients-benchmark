@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1731163339 source:/home/hodor/Projekty/http-clients/languageC/recvfrom/main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<fcntl.h>
+	<unistd.h>
+	<time.h>
+	<errno.h>
+
