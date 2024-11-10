@@ -113,12 +113,30 @@ class NettyAppEndpoint(
 
     val asd = (0..2_000_0).map { it.toString() }.joinToString { it }
 
+    @GetMapping("/dummy/{id}")
+    fun dummyValuea(@PathVariable id: String): Mono<List<String>> {
+        val startDummyValue = System.nanoTime()
+        return Flux
+            .fromIterable(dummyClients)
+            .flatMap { it.get(id) }
+            .collectList() // ta linijka jest najbardziej kluczwa w tym wszystkim XDD
+            .doOnNext {
+                val endDummyValue = System.nanoTime()
+                val dummyValueDuration = Duration.ofNanos(endDummyValue - startDummyValue)
+                Metrics.timer("dummyValueDuration").record(dummyValueDuration)
+            }
+            .threadsXDD()
+
+    }
+//
+//
 //    @GetMapping("/dummy/{id}")
 //    fun dummyValuea(@PathVariable id: String): Mono<List<String>> {
 //        val startDummyValue = System.nanoTime()
 //        return Flux
-//            .fromIterable(dummyClients)
-//            .flatMap { it.get(id) }
+//            .fromIterable((0..100).toList())
+//            .flatMap { Mono.just(asd) }
+////            .threadsXDD()
 //            .collectList() // ta linijka jest najbardziej kluczwa w tym wszystkim XDD
 //            .doOnNext {
 //                val endDummyValue = System.nanoTime()
@@ -126,26 +144,9 @@ class NettyAppEndpoint(
 //                Metrics.timer("dummyValueDuration").record(dummyValueDuration)
 //            }
 //
-//    }
-//
-//
-    @GetMapping("/dummy/{id}")
-    fun dummyValuea(@PathVariable id: String): Mono<List<String>> {
-        val startDummyValue = System.nanoTime()
-        return Flux
-            .fromIterable((0..100).toList())
-            .flatMap { Mono.just(asd) }
 //            .threadsXDD()
-            .collectList() // ta linijka jest najbardziej kluczwa w tym wszystkim XDD
-            .doOnNext {
-                val endDummyValue = System.nanoTime()
-                val dummyValueDuration = Duration.ofNanos(endDummyValue - startDummyValue)
-                Metrics.timer("dummyValueDuration").record(dummyValueDuration)
-            }
-
-            .threadsXDD()
-//            .map { "5" }
-    }
+////            .map { "5" }
+//    }
 
     private fun <T> Flux<T>.threadsXDD(): Flux<T> {
         if (threadsForResponse) {

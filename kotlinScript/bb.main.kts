@@ -71,7 +71,7 @@ object Client {
 
 fun main() {
     val targetUrl = "http://localhost:8082/dummy/1" // Zmień na docelowy URL
-    val requestsPerSecond = 20
+    val requestsPerSecond = 100
     val duration = 60L * 60L // Czas trwania w sekundach
 
     runBlocking {
