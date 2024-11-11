@@ -2,33 +2,23 @@ package com.mateusznalepa.http.clients.api
 
 import com.mateusznalepa.http.clients.client.DummyClient
 import io.micrometer.core.instrument.Metrics
-import io.netty.channel.EventLoopGroup
-import io.netty.channel.epoll.EpollEventLoopGroup
 import io.netty.util.concurrent.FastThreadLocal
 import io.netty.util.internal.PlatformDependent
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.boot.web.embedded.netty.NettyServerCustomizer
 import org.springframework.context.annotation.Configuration
-import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ServerWebExchange
-import org.springframework.web.server.WebFilter
-import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Scheduler
 import reactor.core.scheduler.Schedulers
-import reactor.netty.http.server.HttpServer
 import reactor.netty.resources.LoopResources
 import java.time.Duration
-import java.time.Instant
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.max
 
 
 //@ConditionalOnProperty("threadsForResponse", havingValue = "true")
@@ -104,7 +94,8 @@ class NettyAppEndpoint(
         threadsForResponse
             .takeIf { it }
             ?.let {
-                LoopResources.create("response", 100, true).onServer(true)
+                LoopResources.create("response",
+                    max(Runtime.getRuntime().availableProcessors().toDouble()*2, 4.0).toInt(), true).onServer(true)
             }
             ?.let { Schedulers.fromExecutorService(it) }
 
