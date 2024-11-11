@@ -1,4 +1,4 @@
-#define TARGET_PID 195357
+#define TARGET_PID 8359
 
 
 
@@ -68,7 +68,7 @@ kprobe:mutex_lock
 / pid == TARGET_PID /
 {
     @start[tid] = nsecs;
-        @proc_name[tid] = comm;
+    @proc_name[tid] = comm;
 
 }
 
@@ -78,10 +78,10 @@ kprobe:mutex_unlock
     $duration = nsecs - @start[tid];
 
     //if (@proc_name[tid] == "reactor-http-ep" ) {
+    if (@proc_name[tid] == "AAAAAAAAAAAAAAA" ) {
         //printf("{ \"cpu_core\": \"%d\", \"thread\": \"%s\", \"Option\": \"mutexxxx\", \"duratioNs\": %lld }\n", cpu, @proc_name[tid],  $duration);
-
-        @czas_lockow = hist($duration);
-    //}
+        @czas_mutex = hist($duration);
+    }
 
     delete(@start[tid]);
     delete(@proc_name[tid]);
@@ -112,7 +112,7 @@ tracepoint:sched:sched_switch
     //}
 
  if (args->prev_pid != args->next_pid) {
-    printf("Przełączono z PID: %d (%s) do PID: %d (%s)\n", args->prev_pid, args->prev_comm, args->next_pid, args->next_comm);
+    //printf("Przełączono z PID: %d (%s) do PID: %d (%s)\n", args->prev_pid, args->prev_comm, args->next_pid, args->next_comm);
  } // Sprawdź, czy PID-y są takie same else
  if (args->prev_pid == args->next_pid) {
     //printf("Kontekst przełączono na PID: %d (%s)\n", args->prev_pid, args->prev_comm);
@@ -124,8 +124,8 @@ tracepoint:sched:sched_switch
 
 tracepoint:sched:sched_migrate_task
 {
-    printf("Proces: %s (PID: %d) migrował z CPU: %d do CPU: %d o czasie: %lld ns\n",
-           args->comm, args->pid, args->orig_cpu, args->dest_cpu, nsecs);
+    //printf("Proces: %s (PID: %d) migrował z CPU: %d do CPU: %d o czasie: %lld ns\n",
+           //args->comm, args->pid, args->orig_cpu, args->dest_cpu, nsecs);
 }
 
 
@@ -149,12 +149,12 @@ uretprobe:/lib/x86_64-linux-gnu/libc.so.6:epoll_wait
 END {
 
 
-    printf("Czas switcha\n");
-    print(@czas_switcha);
+    //printf("Czas switcha\n");
+    //print(@czas_switcha);
 
-    printf("\nCzas czytania\n");
-    print(@czas_czytania);
+    //printf("\nCzas czytania\n");
+   // print(@czas_czytania);
 
-    printf("\nCzas lockow\n");
-    print(@czas_lockow);
+    printf("\nCzas mutex\n");
+    print(@czas_mutex);
 }

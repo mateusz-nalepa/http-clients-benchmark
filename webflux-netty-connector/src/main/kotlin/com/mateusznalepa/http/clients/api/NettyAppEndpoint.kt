@@ -73,7 +73,7 @@ class ConfigXD {
 @RestController
 class NettyAppEndpoint(
     private val dummyClients: List<DummyClient>,
-    @Value("\${threadsForResponse}")
+    @Value("\${threadsForResponse:false}")
     private val threadsForResponse: Boolean,
 ) {
 

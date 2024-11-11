@@ -8,7 +8,7 @@
 #include <time.h>
 
 #define PORT 12345
-#define BUFFER_SIZE 16384
+#define BUFFER_SIZE 65500
 
 void set_nonblocking(int sockfd) {
     int flags = fcntl(sockfd, F_GETFL, 0);
@@ -40,38 +40,48 @@ int main() {
     // Mierzenie czasu rozpoczęcia
 
     // Wysłanie wiadomości do serwera
-    sendto(client_fd, buffer, strlen(buffer), 0, (struct sockaddr *)&server_addr, addr_len);
+    //sendto(client_fd, buffer, strlen(buffer), 0, (struct sockaddr *)&server_addr, addr_len);
 
     // Oczekiwanie na odpowiedź w trybie nieblokującym
-    int bytes_received = -1;
-    while (bytes_received < 0) {
-        clock_gettime(CLOCK_MONOTONIC, &start);
+    while (1) {
+        sendto(client_fd, buffer, strlen(buffer), 0, (struct sockaddr *)&server_addr, addr_len);
 
-        bytes_received = recvfrom(client_fd, recv_buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
+        double elapsed_time;
+        int bytes_received = -1;
+        while (bytes_received < 0) {
+            clock_gettime(CLOCK_MONOTONIC, &start);
 
-        clock_gettime(CLOCK_MONOTONIC, &end);
+            bytes_received = recvfrom(client_fd, recv_buffer, BUFFER_SIZE, 0, (struct sockaddr *)&server_addr, &addr_len);
 
-        double elapsed_time = (end.tv_sec - start.tv_sec) * 1000.0; // sekundy na milisekundy
-        elapsed_time += (end.tv_nsec - start.tv_nsec) / 1000000.0; // nanosekundy na milisekundy
-        printf("Czas odpowiedzi: %.3f ms\n", elapsed_time);
+            clock_gettime(CLOCK_MONOTONIC, &end);
 
-        if (bytes_received < 0) {
-            if (errno != EWOULDBLOCK && errno != EAGAIN) {
-                perror("recvfrom failed");
-                close(client_fd);
-                exit(EXIT_FAILURE);
+//            elapsed_time = (end.tv_sec - start.tv_sec) * 1000.0; // sekundy na milisekundy
+//            elapsed_time = (end.tv_nsec - start.tv_nsec) / 1000000.0; // nanosekundy na milisekundy
+            elapsed_time = (end.tv_nsec - start.tv_nsec);// / 1000000.0; // nanosekundy na milisekundy
+//            printf("Czas odpowiedzi: %.3f ms\n", elapsed_time);
+//            printf("Czas odpowiedzi: %.3f ms\n", elapsed_time);
+
+            if (bytes_received < 0) {
+                if (errno != EWOULDBLOCK && errno != EAGAIN) {
+                    perror("recvfrom failed");
+                    close(client_fd);
+                    exit(EXIT_FAILURE);
+                }
+            }
+            //usleep(10000); // 10 ms delay to prevent busy-waiting
+            if (bytes_received < 0) {
+                printf("CZAS: %.f ms Nic nie otrzymano. Ide spac...\n", elapsed_time);
+//                printf("Ide spac na 1s...\n");
+                sleep(1); // 10 ms delay to prevent busy-waiting
             }
         }
-        //usleep(10000); // 10 ms delay to prevent busy-waiting
-        if (bytes_received < 0) {
-            printf("Ide spac na 1s...\n");
-            sleep(1); // 10 ms delay to prevent busy-waiting
-        }
+            recv_buffer[bytes_received] = '\0'; // Dodanie null-terminatora
+        //    printf("Otrzymano od serwera: %s\n", recv_buffer);
+            printf("CZAS: %.0f ms Otrzymano od serwera bajtow: %d\n", elapsed_time, bytes_received);
+            printf("############################\n");
     }
 
-    recv_buffer[bytes_received] = '\0'; // Dodanie null-terminatora
-//    printf("Otrzymano od serwera: %s\n", recv_buffer);
-    printf("Otrzymano od serwera bajtow: %d\n", bytes_received);
+
 //    printf("Czas odpowiedzi: %.3f ms\n", elapsed_time);
 
     // Zamknięcie gniazda
