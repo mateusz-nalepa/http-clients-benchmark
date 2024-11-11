@@ -15,6 +15,26 @@ void set_nonblocking(int sockfd) {
     fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
 }
 
+const char* formattedTime() {
+    static char buffer[100];
+    struct timespec ts;
+    struct tm *timeinfo;
+
+    // Pobranie aktualnego czasu
+    clock_gettime(CLOCK_REALTIME, &ts);
+
+    // Konwersja na czas lokalny
+    timeinfo = localtime(&ts.tv_sec);
+
+    // Formatowanie czasu do postaci czytelnej dla człowieka
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+
+    // Dodanie nanosekund do sformatowanego czasu
+    snprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), ".%09ld", ts.tv_nsec);
+
+    return buffer;
+}
+
 int main() {
     int client_fd;
     struct sockaddr_in server_addr;
@@ -68,16 +88,18 @@ int main() {
                     exit(EXIT_FAILURE);
                 }
             }
-            //usleep(10000); // 10 ms delay to prevent busy-waiting
+            const char *currentTime = formattedTime();
             if (bytes_received < 0) {
-                printf("CZAS: %.f ns Nic nie otrzymano. Ide spac...\n", elapsed_time);
+                printf("%s : %.3f ns No data from server. I wait 1 sec...\n", currentTime, elapsed_time);
 //                printf("Ide spac na 1s...\n");
                 sleep(1); // 10 ms delay to prevent busy-waiting
             }
         }
             recv_buffer[bytes_received] = '\0'; // Dodanie null-terminatora
         //    printf("Otrzymano od serwera: %s\n", recv_buffer);
-            printf("CZAS: %.0f ns Otrzymano od serwera bajtow: %d\n", elapsed_time, bytes_received);
+            const char *currentTime = formattedTime();
+
+            printf("%s : %.3f ns Got %d bytes from server\n", currentTime, elapsed_time, bytes_received);
             printf("############################\n");
     }
 

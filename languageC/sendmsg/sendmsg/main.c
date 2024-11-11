@@ -3,9 +3,31 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <time.h>
 
 #define PORT 12345
 #define BUFFER_SIZE 65500
+
+
+const char* formattedTime() {
+    static char buffer[100];
+    struct timespec ts;
+    struct tm *timeinfo;
+
+    // Pobranie aktualnego czasu
+    clock_gettime(CLOCK_REALTIME, &ts);
+
+    // Konwersja na czas lokalny
+    timeinfo = localtime(&ts.tv_sec);
+
+    // Formatowanie czasu do postaci czytelnej dla człowieka
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+
+    // Dodanie nanosekund do sformatowanego czasu
+    snprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), ".%09ld", ts.tv_nsec);
+
+    return buffer;
+}
 
 int main() {
     int server_fd;
@@ -43,14 +65,23 @@ int main() {
             continue;
         }
         buffer[bytes_received] = '\0'; // Dodanie null-terminatora
-        printf("Otrzymano od klienta: %s\n", buffer);
-        printf("Ide spac na 1s...\n");
+
+        const char *currentTime = formattedTime();
+        printf("%s : Got client request\n", currentTime);
+        const char *currentTime2 = formattedTime();
+        printf("%s : I wait 1 sec before returning response to client...\n", currentTime2);
 
         sleep(1);
-        printf("Wyspalem sie\n");
+        const char *currentTime3 = formattedTime();
+
+        printf("%s : Waiting done! \n", currentTime3);
 
         // Wysłanie odpowiedzi
         int bytes_sent = sendto(server_fd, response, strlen(response), 0, (struct sockaddr *)&client_addr, addr_len);
+        const char *currentTime4 = formattedTime();
+        printf("%s : Response returned to client! \n", currentTime4);
+        printf("############################\n");
+
         if (bytes_sent < 0) {
             perror("sendto failed");
         }

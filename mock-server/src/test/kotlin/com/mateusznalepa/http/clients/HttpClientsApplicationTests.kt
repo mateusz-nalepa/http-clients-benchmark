@@ -20,7 +20,7 @@ class HttpClientsApplicationTests {
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
 
-        val file = File(this::class.java.classLoader.getResource("result2.txt")!!.file)
+        val file = File(this::class.java.classLoader.getResource("result1.txt")!!.file)
 
         file.forEachLine { line ->
             kotlin.runCatching {
