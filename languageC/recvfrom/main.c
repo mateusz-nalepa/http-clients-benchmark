@@ -70,14 +70,14 @@ int main() {
             }
             //usleep(10000); // 10 ms delay to prevent busy-waiting
             if (bytes_received < 0) {
-                printf("CZAS: %.f ms Nic nie otrzymano. Ide spac...\n", elapsed_time);
+                printf("CZAS: %.f ns Nic nie otrzymano. Ide spac...\n", elapsed_time);
 //                printf("Ide spac na 1s...\n");
                 sleep(1); // 10 ms delay to prevent busy-waiting
             }
         }
             recv_buffer[bytes_received] = '\0'; // Dodanie null-terminatora
         //    printf("Otrzymano od serwera: %s\n", recv_buffer);
-            printf("CZAS: %.0f ms Otrzymano od serwera bajtow: %d\n", elapsed_time, bytes_received);
+            printf("CZAS: %.0f ns Otrzymano od serwera bajtow: %d\n", elapsed_time, bytes_received);
             printf("############################\n");
     }
 
