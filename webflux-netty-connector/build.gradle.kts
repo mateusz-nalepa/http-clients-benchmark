@@ -26,10 +26,10 @@ dependencies {
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-//	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 //	testImplementation("io.projectreactor:reactor-test")
-//	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-//	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 //	implementation("io.micrometer:micrometer-tracing:1.3.1")
 //	implementation("io.netty.incubator:netty-incubator-transport-native-io_uring:0.0.25.Final")

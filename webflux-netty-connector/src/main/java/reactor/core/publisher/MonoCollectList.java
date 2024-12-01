@@ -24,8 +24,9 @@ import reactor.util.annotation.Nullable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.apache.hc.client5.http.impl.nio.NalepaLogger.NALEPA_LOG;
+import static org.apache.hc.client5.http.impl.nio.NalepaLogger.NALEPA_LOGXDD;
 
 
 
@@ -55,9 +56,15 @@ final class MonoCollectList<T> extends MonoFromFluxOperator<T, List<T>> implemen
 
 	static final class MonoCollectListSubscriber<T> extends Operators.BaseFluxToMonoOperator<T, List<T>> {
 
+		static AtomicInteger atomicInteger = new AtomicInteger(1);
+
+		String Idk = "IDK# " + atomicInteger.getAndIncrement();
+
 		List<T> list;
 
 		Long startCollectList = System.nanoTime();
+
+		Long startCollectListMillis;
 
 		boolean done;
 
@@ -65,7 +72,11 @@ final class MonoCollectList<T> extends MonoFromFluxOperator<T, List<T>> implemen
 			super(actual);
 			//not this is not thread safe so concurrent discarding multiple + add might fail with ConcurrentModificationException
 			this.list = new ArrayList<>();
-//			NALEPA_LOG.error("{} MonoCollectListSubscriber ", Thread.currentThread());
+//			NALEPA_LOG.error("");
+			startCollectListMillis = System.currentTimeMillis();
+//			counterek.getAndIncrement();
+//			Metrics.gauge("iloscMonoCollectList", counterek, AtomicInteger::get);
+			NALEPA_LOGXDD.error("{} START-MONO. ObjectId: {}, Time: {}", Thread.currentThread(), Idk, startCollectListMillis);
 		}
 
 		@Override
@@ -85,14 +96,21 @@ final class MonoCollectList<T> extends MonoFromFluxOperator<T, List<T>> implemen
 			}
 
 			final List<T> l;
+			Long startCollectListxd = System.nanoTime();
+
 			synchronized (this) {
 				l = list;
 				if (l != null) {
-//					NALEPA_LOG.error("{} MonoCollectListSubscriber add ", Thread.currentThread());
+//					NALEPA_LOGXDD.error("{} MONO-ADD ObjectId: {}", Thread.currentThread(), Idk);
 					l.add(t);
+					Long endCollectList2 = System.nanoTime();
+					Duration collectListDuration2 = Duration.ofNanos(endCollectList2 - startCollectListxd);
+					Metrics.timer("monoOnNext").record(collectListDuration2);
 					return;
 				}
 			}
+
+
 
 			Operators.onDiscard(t, actual.currentContext());
 		}
@@ -148,15 +166,30 @@ final class MonoCollectList<T> extends MonoFromFluxOperator<T, List<T>> implemen
 		@Override
 		List<T> accumulatedValue() {
 			final List<T> l;
+
+			Long startCollectListXD = System.nanoTime();
+
 			synchronized (this) {
 				l = list;
 				list = null;
 			}
+			Long endCollectList1 = System.nanoTime();
+			Duration collectListDuration1 = Duration.ofNanos(endCollectList1 - startCollectListXD);
+			Metrics.timer("monoAccumulatedValue").record(collectListDuration1);
+
 			Long endCollectList = System.nanoTime();
 			Duration collectListDuration = Duration.ofNanos(endCollectList - startCollectList);
 			Metrics.timer("collectListDuration").record(collectListDuration);
 //			Metrics.summary("collectListDurationSummary").record(collectListDuration.toMillis());
-//            NALEPA_LOG.error("{} MonoCollectListSubscriber FINISH. Took: {}", Thread.currentThread(), collectListDuration.toMillis());
+//			counterek.getAndDecrement();
+
+			NALEPA_LOGXDD.error("{} FINISH-MONO. Took: {}, ObjectId: {}, StartTime: {}, Time: {}",
+					Thread.currentThread(),
+					collectListDuration.toMillis(),
+					Idk,
+					startCollectListMillis,
+					System.currentTimeMillis() - startCollectListMillis
+			);
 			return l;
 		}
 	}

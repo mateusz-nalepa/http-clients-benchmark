@@ -1,9 +1,10 @@
 package com.mateusznalepa.http.clients.api
 
-import com.mateusznalepa.http.clients.client.DummyClient
+import com.mateusznalepa.http.clients.client.DummyClientXD
 import io.micrometer.core.instrument.Metrics
 import io.netty.util.concurrent.FastThreadLocal
 import io.netty.util.internal.PlatformDependent
+import org.apache.hc.client5.http.impl.nio.NalepaLogger.NALEPA_LOGXDD
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Configuration
@@ -71,10 +72,13 @@ class ConfigXD {
 
 
 @RestController
-class NettyAppEndpoint(
-    private val dummyClients: List<DummyClient>,
+class NettyAppEndpoint123(
+    private val dummyClientXDS: List<DummyClientXD>,
     @Value("\${threadsForResponse:false}")
     private val threadsForResponse: Boolean,
+
+    @Value("\${isUseDedicatedThreadsPerClient}")
+    private val isUseDedicatedThreadsPerClient: Boolean,
 ) {
 
 
@@ -94,22 +98,30 @@ class NettyAppEndpoint(
         threadsForResponse
             .takeIf { it }
             ?.let {
-                LoopResources.create("response",
-                    max(Runtime.getRuntime().availableProcessors().toDouble()*2, 4.0).toInt(), true).onServer(true)
+                LoopResources.create(
+                    "response",
+                    max(Runtime.getRuntime().availableProcessors().toDouble() * 2, 4.0).toInt(), true
+                ).onServer(true)
             }
             ?.let { Schedulers.fromExecutorService(it) }
-
-
 
 
     val asd = (0..2_000_0).map { it.toString() }.joinToString { it }
 
     @GetMapping("/dummy/{id}")
-    fun dummyValuea(@PathVariable id: String): Mono<List<String>> {
+    fun dummyValue(@PathVariable id: String): Mono<List<String>> {
         val startDummyValue = System.nanoTime()
         return Flux
-            .fromIterable(dummyClients)
-            .flatMap { it.get(id) }
+            .fromIterable(dummyClientXDS)
+            .flatMap { klient ->
+                NALEPA_LOGXDD.error("{}: FLATMAP_START: klient: ${klient.numer()}", Thread.currentThread())
+
+                klient
+                    .get(id)
+                    .doOnNext { NALEPA_LOGXDD.error("{}: FLATMAP_END: klient: ${klient.numer()}", Thread.currentThread()) }
+            }
+//            .publishOn(Schedulers.parallel())
+            .publishOnxddd()
             .collectList() // ta linijka jest najbardziej kluczwa w tym wszystkim XDD
             .doOnNext {
                 val endDummyValue = System.nanoTime()
@@ -117,8 +129,21 @@ class NettyAppEndpoint(
                 Metrics.timer("dummyValueDuration").record(dummyValueDuration)
             }
             .threadsXDD()
-
     }
+
+//    @GetMapping("/dummy/{id}")
+//    fun dummyValuea(@PathVariable id: String): Mono<String> {
+//        val startDummyValue = System.nanoTime()
+//        return dummyClients[0]
+//            .get(id)
+//            .doOnNext {
+//                val endDummyValue = System.nanoTime()
+//                val dummyValueDuration = Duration.ofNanos(endDummyValue - startDummyValue)
+//                Metrics.timer("dummyValueDuration").record(dummyValueDuration)
+//            }
+//            .threadsXDD()
+//    }
+
 //
 //
 //    @GetMapping("/dummy/{id}")
@@ -151,6 +176,14 @@ class NettyAppEndpoint(
             return this.publishOn(xd!!)
         }
         return this
+    }
+
+    private fun <T> Flux<T>.publishOnxddd(): Flux<T> {
+        if (isUseDedicatedThreadsPerClient) {
+            return this
+        }
+        return this.publishOn(Schedulers.parallel())
+//        return this.subscribeOn(Schedulers.parallel())
     }
 
 

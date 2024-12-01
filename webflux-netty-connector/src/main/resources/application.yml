@@ -7,3 +7,4 @@ management:
 logging:
   level:
     io.reactor.netty: TRACE
+    NALEPA-LOGGER: OFF

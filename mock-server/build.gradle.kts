@@ -3,6 +3,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.5"
 	kotlin("jvm") version "1.9.24"
 	kotlin("plugin.spring") version "1.9.24"
+//	id("me.champeau.jmh") version "0.7.2"
 }
 
 group = "com.mateusznalepa"
@@ -28,6 +29,16 @@ dependencies {
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+
+
+//		implementation("org.openjdk.jmh:jmh-core:1.37")
+//
+//
+//	jmh("org.openjdk.jmh:jmh-core:1.37")
+//	jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
+//
+//	jmhAnnotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:1.37")
 }
 
 kotlin {

@@ -39,6 +39,7 @@ class NettyConfig(
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 500 * 100)
                     .responseTimeout(Duration.ofMillis(500 * 100))
                     .followRedirect(false)
+//                    .metrics()
 
 
             val memoryAllocator =
@@ -57,7 +58,7 @@ class NettyConfig(
                 val reactorRequestFactory = ReactorResourceFactory().apply {
                     connectionProvider = connectionProviderBuilder.build()
 //                    loopResources = LoopResources.create("${size}P-$number-")
-                    loopResources = LoopResources.create("AAAAAAAAAAAAAAAAAA-${number}")
+                    loopResources = LoopResources.create("$size-Y-${number}")
                 }
 
                 return ReactorClientHttpConnector(reactorRequestFactory, clientCustomization)
@@ -75,7 +76,7 @@ class NettyConfig(
     }
 
 //    val sharedLoopResoeurces = LoopResources.create("LP-")
-    val sharedLoopResoeurces = LoopResources.create("AAAAAAAAAAAAAAAAAA")
+    val sharedLoopResoeurces = LoopResources.create("XX")
 //    val sharedLoopResources = LoopResources.create("LP-", 400, true)
 
 }

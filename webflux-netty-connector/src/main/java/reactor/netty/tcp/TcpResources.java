@@ -405,7 +405,7 @@ public class TcpResources implements ConnectionProvider, LoopResources {
                                              BiFunction<LoopResources, ConnectionProvider, T> onNew) {
         if (previous == null) {
 //            loops = loops == null ? LoopResources.create("xd-" + name, Integer.parseInt(System.getProperty("kurwa")), true) : loops;
-            loops = loops == null ? LoopResources.create("xd-") : loops;
+            loops = loops == null ? LoopResources.create("arg-") : loops;
             provider = provider == null ? ConnectionProvider.create(name, 500) : provider;
         }
         else {

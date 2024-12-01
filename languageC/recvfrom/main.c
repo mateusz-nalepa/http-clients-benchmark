@@ -55,7 +55,7 @@ int main() {
     server_addr.sin_port = htons(PORT);
 
     // Ustawienie gniazda w tryb nieblokujący
-     set_nonblocking(client_fd);
+     //set_nonblocking(client_fd);
 
     // Mierzenie czasu rozpoczęcia
 

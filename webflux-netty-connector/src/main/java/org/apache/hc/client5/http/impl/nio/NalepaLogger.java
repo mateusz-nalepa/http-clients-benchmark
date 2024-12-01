@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 public class NalepaLogger {
 
-    public static final Logger NALEPA_LOG = LoggerFactory.getLogger("NALEPA-LOGGER");
+    public static final Logger NALEPA_LOGXDD = LoggerFactory.getLogger("NALEPA-LOGGER");
 
 
 }

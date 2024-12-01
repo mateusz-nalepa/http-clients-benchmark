@@ -20,7 +20,6 @@ fun main(args: Array<String>) {
 class DummyPrometheusConfig(
     private val meterRegistry: PrometheusMeterRegistry,
 ) {
-
     @PostConstruct
     fun configurePercentiles() {
         meterRegistry
