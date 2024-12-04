@@ -61,9 +61,9 @@ object ScriptLogger {
 }
 
 object ScriptParameters {
-    const val SOURCE_DIRECTORY_WITH_FILES = "source2"
+    const val SOURCE_DIRECTORY_WITH_FILES = "source3"
     const val BATCH_SIZE = 50
-    const val APP_URL = "http://localhost:8082"
+    const val APP_URL = "http://localhost:8083"
 }
 
 object Prometheus {

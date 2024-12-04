@@ -101,7 +101,7 @@ final class MonoCollectList<T> extends MonoFromFluxOperator<T, List<T>> implemen
 			synchronized (this) {
 				l = list;
 				if (l != null) {
-//					NALEPA_LOGXDD.error("{} MONO-ADD ObjectId: {}", Thread.currentThread(), Idk);
+					NALEPA_LOGXDD.error("{} MONO-ADD ObjectId: {}", Thread.currentThread(), Idk);
 					l.add(t);
 					Long endCollectList2 = System.nanoTime();
 					Duration collectListDuration2 = Duration.ofNanos(endCollectList2 - startCollectListxd);

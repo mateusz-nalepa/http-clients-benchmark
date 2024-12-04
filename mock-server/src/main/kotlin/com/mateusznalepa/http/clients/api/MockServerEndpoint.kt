@@ -1,11 +1,14 @@
 package com.mateusznalepa.http.clients.api
 
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import java.time.Duration
+import javax.print.attribute.standard.Media
 import kotlin.random.Random
 
 val uberResponses = mapOf(
@@ -43,16 +46,17 @@ class MockServerEndpoint {
             .delayElement(Duration.ofMillis(10L))
 
 
-    @GetMapping("/mock-server/{id}/{size}",)
-    fun stub(@PathVariable id: Int, @PathVariable size: String): Mono<out ResponseEntity<out Any>> =
+    @GetMapping("/mock-server/{id}/{size}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun stub(@PathVariable id: Int, @PathVariable size: String): Mono<ResponseEntity<XD>> =
         Mono
 
 //            .just(ResponseEntity.ok(ultraSmallResponses[Random.nextInt(1, 5).also { println(it) }]))
 //            .just(ResponseEntity.ok(responses[id].also { println(id) }))
-            .just(ResponseEntity.ok(response(size, id)))
+            .just(ResponseEntity.ok(XD(response(size, id)!!)))
+            .publishOn(Schedulers.parallel())
 //            .just(ResponseEntity.ok(uberResponses[id]))
 //            .just(ResponseEntity.ok(response()))
-            .delayElement(Duration.ofMillis(id * 10L))
+//            .delayElement(Duration.ofMillis(id * 10L))
 
 
     private fun response(size: String, id: Int):String? =
@@ -66,3 +70,7 @@ class MockServerEndpoint {
 
 //5519
 //6489
+
+data class XD(
+    val value: String,
+)

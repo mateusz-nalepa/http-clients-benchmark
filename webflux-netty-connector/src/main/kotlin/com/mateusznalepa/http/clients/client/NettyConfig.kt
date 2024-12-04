@@ -55,6 +55,7 @@ class NettyConfig(
 
         when (isUseDedicatedThreadsPerClient) {
             true -> {
+                println("custom loop resources")
                 val reactorRequestFactory = ReactorResourceFactory().apply {
                     connectionProvider = connectionProviderBuilder.build()
 //                    loopResources = LoopResources.create("${size}P-$number-")
@@ -65,12 +66,13 @@ class NettyConfig(
             }
 
             false -> {
+                println("shared loop resources")
                 val reactorRequestFactory = ReactorResourceFactory().apply {
                     connectionProvider = connectionProviderBuilder.build()
                     loopResources = sharedLoopResoeurces
                 }
 
-                return ReactorClientHttpConnector(reactorRequestFactory, clientCustomization)
+                return ReactorClientHttpConnector(clientCustomization.invoke(HttpClient.create()))
             }
         }
     }
