@@ -23,7 +23,7 @@ class DummyClientsFactory(
 //        clients.addAll((1..14).map { dummyClientBean(it, "m") })
 //        clients.addAll((1..6).map { dummyClientBean(it, "l") })
 //        clients.addAll((1..30).map { dummyClientBean(it, "m") })
-        clients.addAll((1..10).map { dummyClientBean(it, "l") })
+        clients.addAll((1..50).map { dummyClientBean(it, "l") })
         return clients
     }
 

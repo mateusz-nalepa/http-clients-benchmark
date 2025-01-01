@@ -78,10 +78,8 @@ class NettyAppEndpoint123(
     @Value("\${threadsForResponse:false}")
     private val threadsForResponse: Boolean,
 
-    @Value("\${isUseDedicatedThreadsPerClient}")
-    private val isUseDedicatedThreadsPerClient: Boolean,
 
-    @Value("\${inneWatkiNaResponseEncode}")
+    @Value("\${inneWatkiNaResponseEncode:false}")
     private val inneWatkiNaResponseEncode: Boolean,
 ) {
 
@@ -100,7 +98,7 @@ class NettyAppEndpoint123(
 
     private val xd: Scheduler? =
         if (inneWatkiNaResponseEncode) {
-            Schedulers.parallel()
+            Schedulers.newParallel("XD")
         } else null
 
 
