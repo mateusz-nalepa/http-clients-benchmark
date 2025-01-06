@@ -1,13 +1,13 @@
 package com.mateusznalepa.http.clients.com.mateusznalepa.http.clients
 
-import com.mateusznalepa.http.clients.api.CustomThreadFactory
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
-import reactor.netty.resources.LoopResources
 import java.time.Duration
 import java.util.concurrent.Executors
+import java.util.concurrent.ThreadFactory
+import java.util.concurrent.atomic.AtomicInteger
 
 class ASD {
 
@@ -46,13 +46,13 @@ class ASD {
 
 }
 
-//class CustomThreadFactory : ThreadFactory {
-//    private val xd = AtomicInteger(0)
-//    private val namePrefix = "res-";
-//
-//    override fun newThread(r: Runnable): Thread {
-//        val thread = Thread(r, namePrefix + xd.getAndIncrement())
-//        thread.setDaemon(true)
-//        return thread
-//    }
-//}
+class CustomThreadFactory : ThreadFactory {
+    private val xd = AtomicInteger(0)
+    private val namePrefix = "res-";
+
+    override fun newThread(r: Runnable): Thread {
+        val thread = Thread(r, namePrefix + xd.getAndIncrement())
+        thread.setDaemon(true)
+        return thread
+    }
+}

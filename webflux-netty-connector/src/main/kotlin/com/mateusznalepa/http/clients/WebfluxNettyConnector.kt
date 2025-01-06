@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
 }
 
 @Component
-class DummyPrometheusConfig(
+class PrometheusPercentilesConfig(
     private val meterRegistry: PrometheusMeterRegistry,
 ) {
     @PostConstruct
@@ -29,7 +29,7 @@ class DummyPrometheusConfig(
                 override fun configure(id: Id, config: DistributionStatisticConfig): DistributionStatisticConfig? {
                     return DistributionStatisticConfig
                         .builder()
-                        .percentiles(0.50, 0.75, 0.99, 0.999)
+                        .percentiles(0.99, 0.999)
                         .build()
                         .merge(config)
                 }

@@ -16,6 +16,7 @@
 
 package reactor.core.publisher;
 
+import com.mateusznalepa.http.clients.api.Logeusz;
 import io.micrometer.core.instrument.Metrics;
 import reactor.core.CoreSubscriber;
 import reactor.core.Fuseable;
@@ -56,9 +57,9 @@ final class MonoCollectList<T> extends MonoFromFluxOperator<T, List<T>> implemen
 
 	static final class MonoCollectListSubscriber<T> extends Operators.BaseFluxToMonoOperator<T, List<T>> {
 
-		static AtomicInteger atomicInteger = new AtomicInteger(1);
+//		static AtomicInteger atomicInteger = new AtomicInteger(1);
 
-		String Idk = "IDK# " + atomicInteger.getAndIncrement();
+//		String Idk = "IDK# " + atomicInteger.getAndIncrement();
 
 		List<T> list;
 
@@ -76,7 +77,7 @@ final class MonoCollectList<T> extends MonoFromFluxOperator<T, List<T>> implemen
 			startCollectListMillis = System.currentTimeMillis();
 //			counterek.getAndIncrement();
 //			Metrics.gauge("iloscMonoCollectList", counterek, AtomicInteger::get);
-			NALEPA_LOGXDD.error("{} START-MONO. ObjectId: {}, Time: {}", Thread.currentThread(), Idk, startCollectListMillis);
+//			NALEPA_LOGXDD.error("{} START-MONO. ObjectId: {}, Time: {}", Thread.currentThread(), Idk, startCollectListMillis);
 		}
 
 		@Override
@@ -101,7 +102,8 @@ final class MonoCollectList<T> extends MonoFromFluxOperator<T, List<T>> implemen
 			synchronized (this) {
 				l = list;
 				if (l != null) {
-					NALEPA_LOGXDD.error("{} MONO-ADD ObjectId: {}", Thread.currentThread(), Idk);
+//					NALEPA_LOGXDD.error("{} MONO-ADD ObjectId: {}", Thread.currentThread(), Idk);
+					Logeusz.INSTANCE.loguj("Adding new element :D ");
 					l.add(t);
 					Long endCollectList2 = System.nanoTime();
 					Duration collectListDuration2 = Duration.ofNanos(endCollectList2 - startCollectListxd);
@@ -183,13 +185,13 @@ final class MonoCollectList<T> extends MonoFromFluxOperator<T, List<T>> implemen
 //			Metrics.summary("collectListDurationSummary").record(collectListDuration.toMillis());
 //			counterek.getAndDecrement();
 
-			NALEPA_LOGXDD.error("{} FINISH-MONO. Took: {}, ObjectId: {}, StartTime: {}, Time: {}",
-					Thread.currentThread(),
-					collectListDuration.toMillis(),
-					Idk,
-					startCollectListMillis,
-					System.currentTimeMillis() - startCollectListMillis
-			);
+//			NALEPA_LOGXDD.error("{} FINISH-MONO. Took: {}, ObjectId: {}, StartTime: {}, Time: {}",
+//					Thread.currentThread(),
+//					collectListDuration.toMillis(),
+//					Idk,
+//					startCollectListMillis,
+//					System.currentTimeMillis() - startCollectListMillis
+//			);
 			return l;
 		}
 	}

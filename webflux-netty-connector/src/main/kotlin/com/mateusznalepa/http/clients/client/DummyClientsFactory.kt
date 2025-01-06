@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
-import java.util.concurrent.atomic.AtomicInteger
 
 @Component
 class DummyClientsFactory(
@@ -14,20 +13,22 @@ class DummyClientsFactory(
     private val mockServerPort: String,
 ) {
 
-    private val counterek: AtomicInteger = AtomicInteger(1)
-
     @Bean
-    fun dummyClientsSmall(): List<DummyClientXD>  {
-        val clients = mutableListOf<DummyClientXD>()
+    fun dummyClients(): List<DummyClient> {
+        val clients = mutableListOf<DummyClient>()
 //        clients.addAll((1..20).map { dummyClientBean(it, "s") })
 //        clients.addAll((1..14).map { dummyClientBean(it, "m") })
 //        clients.addAll((1..6).map { dummyClientBean(it, "l") })
-//        clients.addAll((1..30).map { dummyClientBean(it, "m") })
-        clients.addAll((1..50).map { dummyClientBean(it, "l") })
+//        clients.addAll((1..50).map { dummyClientBean(it, "m") })
+
+        // lepiej dac publishOn na samym koncu xd
+//        clients.addAll((1..20).map { dummyClientBean(it, "l") })
+        // mozna dac publishOn zaraz po webClient xd
+        clients.addAll((1..20).map { dummyClientBean(it, "l") })
         return clients
     }
 
-    private fun dummyClientBean(it: Int, size: String): DummyClientXD {
+    private fun dummyClientBean(it: Int, size: String): DummyClient {
         val dummyClient = dummyClient(it, size)
         beanFactory.initializeBean(dummyClient, "dummyClient$it$size")
         beanFactory.autowireBean(dummyClient)
@@ -35,12 +36,11 @@ class DummyClientsFactory(
         return dummyClient
     }
 
-    private fun dummyClient(number: Int, size: String): DummyClientXD =
-        DummyClientXD(
-            webClient = webClientFactory.createWebClient(number, size),
+    private fun dummyClient(number: Int, size: String): DummyClient =
+        DummyClient(
+            webClient = webClientFactory.create(number, size),
             mockServerPort = mockServerPort,
             size = size,
-            numer = counterek.getAndIncrement(),
         )
 
 }

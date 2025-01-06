@@ -13,8 +13,8 @@ import reactor.netty.resources.LoopResources
 import java.time.Duration
 
 @Component
-class NettyConfig(
-    @Value("\${isUseDedicatedThreadsPerClient}")
+class NettyConnectorConfig(
+    @Value("\${isUseDedicatedThreadsPerClient:false}")
     private val isUseDedicatedThreadsPerClient: Boolean,
 
     @Value("\${memoryAllocatorType}")
@@ -22,7 +22,7 @@ class NettyConfig(
 ) {
 
     fun createClient(number: Int, size: String): ReactorClientHttpConnector {
-        val maxConnections = 500
+        val maxConnections = 5000
 
         val connectionProviderBuilder =
             ConnectionProvider
@@ -55,10 +55,9 @@ class NettyConfig(
 
         when (isUseDedicatedThreadsPerClient) {
             true -> {
-                println("custom loop resources")
+                println("Dedicated Loop Resources")
                 val reactorRequestFactory = ReactorResourceFactory().apply {
                     connectionProvider = connectionProviderBuilder.build()
-//                    loopResources = LoopResources.create("${size}P-$number-")
                     loopResources = LoopResources.create("$size-Y-${number}")
                 }
 
@@ -66,19 +65,19 @@ class NettyConfig(
             }
 
             false -> {
-                println("shared loop resources")
-                val reactorRequestFactory = ReactorResourceFactory().apply {
-                    connectionProvider = connectionProviderBuilder.build()
-                    loopResources = sharedLoopResoeurces
-                }
-
-                return ReactorClientHttpConnector(clientCustomization.invoke(HttpClient.create()))
+                println("Shared Loop Resource")
+//                val reactorRequestFactory = ReactorResourceFactory().apply {
+//                    connectionProvider = connectionProviderBuilder.build()
+//                    loopResources = sharedLoopResources
+//                }
+//                return ReactorClientHttpConnector(reactorRequestFactory, clientCustomization)
+                return ReactorClientHttpConnector(clientCustomization.invoke(HttpClient.create(connectionProviderBuilder.build())))
             }
         }
     }
 
 //    val sharedLoopResoeurces = LoopResources.create("LP-")
-    val sharedLoopResoeurces = LoopResources.create("XX")
+//    val sharedLoopResources = LoopResources.create("klientHttp")
 //    val sharedLoopResources = LoopResources.create("LP-", 400, true)
 
 }

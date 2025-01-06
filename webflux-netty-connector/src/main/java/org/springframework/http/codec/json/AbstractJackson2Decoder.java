@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.mateusznalepa.http.clients.api.Logeusz;
 import io.micrometer.core.instrument.Metrics;
 import org.reactivestreams.Publisher;
 import org.springframework.core.MethodParameter;
@@ -122,12 +123,16 @@ public abstract class AbstractJackson2Decoder extends Jackson2CodecSupport imple
         return Mono.deferContextual((contextView) -> {
             // tu juz zaczac czas????
             Map<String, Object> hintsToUse = contextView.isEmpty() ? hints : Hints.merge(hints, ContextView.class.getName(), contextView);
-            return DataBufferUtils.join(input, this.maxInMemorySize).flatMap((dataBuffer) -> {
-//                System.out.println("XDDDDDDDDD");
-                return Mono.justOrEmpty(this.decode(dataBuffer, elementType, mimeType, hintsToUse));
-            });
+            return DataBufferUtils
+                    .join(input, this.maxInMemorySize)
+//                    .publishOn(paraXD)
+                    .flatMap(dataBuffer ->
+                            Mono.justOrEmpty(decode(dataBuffer, elementType, mimeType, hintsToUse))
+                    );
         });
     }
+//    private static final Scheduler paraXD = Schedulers.newParallel("XD");
+
 
     public Object decode(DataBuffer dataBuffer, ResolvableType targetType, @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) throws DecodingException {
         ObjectMapper mapper = this.selectObjectMapper(targetType, mimeType);
@@ -137,7 +142,6 @@ public abstract class AbstractJackson2Decoder extends Jackson2CodecSupport imple
             Object var8;
             Long startXDDD = System.nanoTime();
             try {
-
 
 
 
@@ -151,6 +155,7 @@ public abstract class AbstractJackson2Decoder extends Jackson2CodecSupport imple
             } finally {
                 DataBufferUtils.release(dataBuffer);
 
+                Logeusz.INSTANCE.loguj("decoder jest tutaj");
                 Long endDummyValue = System.nanoTime();
                 Duration dummyValueDuration = Duration.ofNanos(endDummyValue - startXDDD);
                 Metrics.timer("decodeValue").record(dummyValueDuration);

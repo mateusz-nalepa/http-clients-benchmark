@@ -30,6 +30,11 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+	implementation("io.micrometer:micrometer-registry-prometheus:1.13.6")
+
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+
 
 
 //		implementation("org.openjdk.jmh:jmh-core:1.37")

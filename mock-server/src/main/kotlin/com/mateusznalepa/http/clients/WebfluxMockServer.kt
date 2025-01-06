@@ -10,8 +10,15 @@ package com.mateusznalepa.http.clients
 //import org.openjdk.jmh.runner.options.Options
 //import org.openjdk.jmh.runner.options.OptionsBuilder
 //import org.openjdk.jmh.runner.options.TimeValue
+import io.micrometer.core.instrument.Meter.Id
+import io.micrometer.core.instrument.config.MeterFilter
+import io.micrometer.core.instrument.distribution.DistributionStatisticConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import jakarta.annotation.PostConstruct
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.stereotype.Component
+
 //import java.util.concurrent.TimeUnit
 
 //@SpringBootApplication
@@ -59,3 +66,25 @@ fun main(args: Array<String>) {
 //
 //    }
 //}
+
+@Component
+class DummyPrometheusConfig(
+    private val meterRegistry: PrometheusMeterRegistry,
+) {
+    @PostConstruct
+    fun configurePercentiles() {
+        meterRegistry
+            .config()
+            .meterFilter(object : MeterFilter {
+
+                override fun configure(id: Id, config: DistributionStatisticConfig): DistributionStatisticConfig? {
+                    return DistributionStatisticConfig
+                        .builder()
+                        .percentiles(0.99, 0.999)
+                        .build()
+                        .merge(config)
+                }
+            })
+    }
+
+}
