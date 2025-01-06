@@ -134,15 +134,15 @@ Schedulers.newBoundedElastic(
 //                Schedulers.newBoundedElastic(
 //                    Runtime.getRuntime().availableProcessors(), 100_000, "XDDDDD"
 //                )
-//                Schedulers.boundedElastic()
+                Schedulers.boundedElastic()
 //            Schedulers.addExecutorServiceDecorator("asd") { a, b ->
-//                Dupa(b)
+//                TimedScheduledExecutorService(b)
 //            }
 //            bounded
             //            Schedulers.parallel()
 //            ThreadLocal.withInitial { createXD(256) }
 //            createXD(8)
-            Schedulers.newParallel("2", 20)
+//            Schedulers.newParallel("2", 20)
 
         } else null
 
@@ -196,8 +196,7 @@ Schedulers.newBoundedElastic(
 
     private fun <T> Mono<T>.publishOnSchedulerWhenFlagIsTrue(): Mono<T> {
         if (inneWatkiNaResponseEncode) {
-            return this.publishOn(Schedulers.boundedElastic())
-            return this.publishOn(Schedulers.parallel())
+            return this.publishOn(schedulerOrNull!!)
         }
         return this
     }
@@ -215,7 +214,7 @@ Schedulers.newBoundedElastic(
 
 object Logeusz {
     fun loguj(message: String) {
-        println(Thread.currentThread().name + " ### " + message)
+//        println(Thread.currentThread().name + " ### " + message)
     }
 }
 
