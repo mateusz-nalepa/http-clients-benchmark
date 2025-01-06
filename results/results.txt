@@ -145,3 +145,16 @@ parallel
 20l
 50 batchSize
 http://localhost:3000/d/bdp8tt8kshekgea/metricssimple?from=2025-01-06T12:36:50.515Z&to=2025-01-06T12:56:24.289Z&timezone=browser
+
+
+15. 11m
+apache congig, bez parallel
+20l
+50 batchSize
+http://localhost:3000/d/bdp8tt8kshekgea/metricssimple?from=2025-01-06T21:37:29.492Z&to=2025-01-06T21:44:48.446Z&timezone=browser
+
+16. 11m
+apache congig, bez parallel
+20l
+50 batchSize
+http://localhost:3000/d/bdp8tt8kshekgea/metricssimple?from=2025-01-06T21:37:29.492Z&to=2025-01-06T21:44:48.446Z&timezone=browser

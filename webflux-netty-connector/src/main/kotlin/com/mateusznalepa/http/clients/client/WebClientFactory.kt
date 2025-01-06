@@ -1,6 +1,7 @@
 package com.mateusznalepa.http.clients.client
 
 import org.springframework.http.client.reactive.ClientHttpConnector
+import org.springframework.http.client.reactive.HttpComponentsClientHttpConnector
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
@@ -27,7 +28,8 @@ class WebClientFactory(
             .build()
 
     fun createConnector(number: Int, size: String): ClientHttpConnector =
-        nettyConnectorConfig.createClient(number, size)
+//        nettyConnectorConfig.createClient(number, size)
+        HttpComponentsClientHttpConnector(ApacheConfig.create(number, 500))
 
 }
 

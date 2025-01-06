@@ -21,6 +21,7 @@ class NettyConnectorConfig(
     private val memoryAllocatorType: String,
 ) {
 
+
     fun createClient(number: Int, size: String): ReactorClientHttpConnector {
         val maxConnections = 5000
 
@@ -75,6 +76,62 @@ class NettyConnectorConfig(
             }
         }
     }
+
+
+//    fun createClient(number: Int, size: String): ReactorClientHttpConnector {
+//        val maxConnections = 5000
+//
+//        val connectionProviderBuilder =
+//            ConnectionProvider
+//                .builder("http-netty-$number-")
+//                .maxConnections(maxConnections)
+//                .pendingAcquireTimeout(Duration.ofMillis(500 * 100))
+//                .pendingAcquireMaxCount(maxConnections * 3)
+//                .metrics(true)
+//
+//        val clientCustomization: (t: HttpClient) -> HttpClient = { client ->
+//
+//            val builder =
+//                client
+//                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 500 * 100)
+//                    .responseTimeout(Duration.ofMillis(500 * 100))
+//                    .followRedirect(false)
+////                    .metrics()
+//
+//
+//            val memoryAllocator =
+//                when (memoryAllocatorType) {
+//                    "pooled" -> PooledByteBufAllocator.DEFAULT
+//                    "unpooled" -> UnpooledByteBufAllocator.DEFAULT
+//                    else -> throw RuntimeException("not supported allocator type")
+//                }
+//
+//
+//            builder.option(ChannelOption.ALLOCATOR, memoryAllocator)
+//        }
+//
+//        when (isUseDedicatedThreadsPerClient) {
+//            true -> {
+//                println("Dedicated Loop Resources")
+//                val reactorRequestFactory = ReactorResourceFactory().apply {
+//                    connectionProvider = connectionProviderBuilder.build()
+//                    loopResources = LoopResources.create("$size-Y-${number}")
+//                }
+//
+//                return ReactorClientHttpConnector(reactorRequestFactory, clientCustomization)
+//            }
+//
+//            false -> {
+//                println("Shared Loop Resource")
+////                val reactorRequestFactory = ReactorResourceFactory().apply {
+////                    connectionProvider = connectionProviderBuilder.build()
+////                    loopResources = sharedLoopResources
+////                }
+////                return ReactorClientHttpConnector(reactorRequestFactory, clientCustomization)
+//                return ReactorClientHttpConnector(clientCustomization.invoke(HttpClient.create(connectionProviderBuilder.build())))
+//            }
+//        }
+//    }
 
 //    val sharedLoopResoeurces = LoopResources.create("LP-")
 //    val sharedLoopResources = LoopResources.create("klientHttp")

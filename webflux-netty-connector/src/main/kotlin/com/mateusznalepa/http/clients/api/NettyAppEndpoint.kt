@@ -1,7 +1,7 @@
 package com.mateusznalepa.http.clients.api
 
 import com.mateusznalepa.http.clients.client.DummyClient
-import com.mateusznalepa.http.clients.client.XD
+import com.mateusznalepa.http.clients.client.MockServerResponse
 import io.micrometer.core.instrument.Metrics
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.GetMapping
@@ -147,7 +147,7 @@ Schedulers.newBoundedElastic(
         } else null
 
     @GetMapping("/dummy/{id}")
-    fun dummyValue(@PathVariable id: String): Mono<List<XD>> =
+    fun dummyValue(@PathVariable id: String): Mono<List<MockServerResponse>> =
         Flux
             .fromIterable(dummyClients)
 //            .parallel()

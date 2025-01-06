@@ -35,6 +35,9 @@ dependencies {
 //	implementation("io.netty.incubator:netty-incubator-transport-native-io_uring:0.0.25.Final")
 //	implementation("io.netty:netty-transport-native-kqueue:4.1.111.Final")
 //	implementation("io.projectreactor.addons:reactor-pool-micrometer:0.1.6")
+
+	implementation("org.apache.httpcomponents.client5:httpclient5:5.4.1")
+	implementation("org.apache.httpcomponents.core5:httpcore5-reactive:5.3.1")
 }
 
 kotlin {

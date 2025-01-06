@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono
 import java.net.URI
 import java.time.Duration
 
-data class XD(
+data class MockServerResponse(
     val value: String,
 )
 class DummyClient(
@@ -16,7 +16,7 @@ class DummyClient(
     private val size: String,
 ) {
 
-    fun get(id: String): Mono<XD> {
+    fun get(id: String): Mono<MockServerResponse> {
         val startDummyClient = System.nanoTime()
 
         return webClient
@@ -24,7 +24,7 @@ class DummyClient(
             .uri(URI.create("http://localhost:$mockServerPort/mock-server/$id/$size"))
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .bodyToMono(XD::class.java)
+            .bodyToMono(MockServerResponse::class.java)
             .doOnNext {
                 val endDummyClient = System.nanoTime()
                 val dummyClientDuration = Duration.ofNanos(endDummyClient - startDummyClient)
