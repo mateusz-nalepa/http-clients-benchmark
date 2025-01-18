@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.mateusznalepa.http.clients.util.logger.CustomLoggerWrapper;
 import io.micrometer.core.instrument.Metrics;
 import org.reactivestreams.Publisher;
 import org.springframework.core.MethodParameter;
@@ -39,6 +40,7 @@ import org.springframework.util.MimeType;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.context.ContextView;
+
 
 public abstract class AbstractJackson2Decoder extends Jackson2CodecSupport implements HttpMessageDecoder<Object> {
     private int maxInMemorySize = 262144;
@@ -154,7 +156,7 @@ public abstract class AbstractJackson2Decoder extends Jackson2CodecSupport imple
             } finally {
                 DataBufferUtils.release(dataBuffer);
 
-                Logeusz.INSTANCE.loguj("decoder jest tutaj");
+                CustomLoggerWrapper.log(Thread.currentThread() + " ### DEcoder");
                 Long endDummyValue = System.nanoTime();
                 Duration dummyValueDuration = Duration.ofNanos(endDummyValue - startXDDD);
                 Metrics.timer("decodeValue").record(dummyValueDuration);

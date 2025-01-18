@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import io.micrometer.core.instrument.Metrics;
-import com.mateusznalepa.http.clients.util.logger.CustomLogger;
+import com.mateusznalepa.http.clients.util.logger.CustomLoggerWrapper;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -228,7 +228,6 @@ public abstract class AbstractJackson2Encoder extends Jackson2CodecSupport imple
 
         Long startEncodeValue = System.nanoTime();
 
-
         Class<?> jsonView = null;
         FilterProvider filters = null;
         if (value instanceof MappingJacksonValue mappingJacksonValue) {
@@ -257,14 +256,10 @@ public abstract class AbstractJackson2Encoder extends Jackson2CodecSupport imple
             try (JsonGenerator generator = mapper.getFactory().createGenerator(byteBuilder, encoding)) {
 
 
-                Long startXDDD = System.nanoTime();
                 writer.writeValue(generator, value);
                 generator.flush();
 
-                Long endDummyValue = System.nanoTime();
-                Duration dummyValueDuration = Duration.ofNanos(endDummyValue - startXDDD);
-                Metrics.timer("encodeValueWriteValue").record(dummyValueDuration);
-
+                CustomLoggerWrapper.log(Thread.currentThread() + " ### ENcoder");
             }
             catch (InvalidDefinitionException ex) {
                 throw new CodecException("Type definition error: " + ex.getType(), ex);
@@ -277,15 +272,8 @@ public abstract class AbstractJackson2Encoder extends Jackson2CodecSupport imple
             }
 
             byte[] bytes = byteBuilder.toByteArray();
-            CustomLogger.NALEPA_LOGXDD.error("{}: Alokuje sobie pamiec XD", Thread.currentThread());
-
-            Long startXDDD = System.nanoTime();
 
             DataBuffer buffer = bufferFactory.allocateBuffer(bytes.length);
-            Long endDummyValue = System.nanoTime();
-            Duration dummyValueDuration = Duration.ofNanos(endDummyValue - startXDDD);
-            Metrics.timer("encodeValueAllocateBuffer").record(dummyValueDuration);
-
             buffer.write(bytes);
             Hints.touchDataBuffer(buffer, hints, logger);
 
