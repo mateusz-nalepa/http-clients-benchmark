@@ -1,0 +1,59 @@
+package com.mateusznalepa.http.clients.api
+
+import com.mateusznalepa.http.clients.TestAppConfig
+import com.mateusznalepa.http.clients.client.DummyClient
+import com.mateusznalepa.http.clients.client.MockServerResponse
+import com.mateusznalepa.http.clients.util.customThreadPool.CustomSchedulerCreator
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import reactor.core.scheduler.Scheduler
+
+
+@RestController
+class TestAppEndpoint(
+    private val dummyClients: List<DummyClient>,
+    customSchedulerCreator: CustomSchedulerCreator,
+) {
+
+    private val cpuBoundSchedulerOrNull: Scheduler? =
+        if (TestAppConfig.CPU_BOUND_SCHEDULER_ACTIVE) {
+//            val bounded = Schedulers.boundedElastic()
+//            Schedulers.addExecutorServiceDecorator("asd") { a, b ->
+//                TimedScheduledExecutorService(b)
+//            }
+//            bounded
+//            Schedulers.parallel()
+            customSchedulerCreator.create(Runtime.getRuntime().availableProcessors())
+//            Schedulers.boundedElastic()
+        } else null
+
+
+    @GetMapping("/dummy/{id}")
+    fun dummyValue(@PathVariable id: String): Mono<List<MockServerResponse>> =
+        Flux
+            .fromIterable(dummyClients)
+            .flatMap { dummyClient ->
+                dummyClient
+                    .get(id)
+            }
+            .collectList()
+            .publishOnCPUBoundThreads()
+
+    private fun <T> Flux<T>.publishOnCPUBoundThreads(): Flux<T> {
+        if (TestAppConfig.CPU_BOUND_SCHEDULER_ACTIVE) {
+            return this.publishOn(cpuBoundSchedulerOrNull!!)
+        }
+        return this
+    }
+
+    private fun <T> Mono<T>.publishOnCPUBoundThreads(): Mono<T> {
+        if (TestAppConfig.CPU_BOUND_SCHEDULER_ACTIVE) {
+            return this.publishOn(cpuBoundSchedulerOrNull!!)
+        }
+        return this
+    }
+
+}

@@ -4241,3 +4241,22 @@ val responses: Map<Int, String> = mapOf(
     ]
 }}""",
 )
+
+val uberResponses = mapOf(
+    1 to uberResponse(1),
+    2 to uberResponse(2),
+    3 to uberResponse(3),
+    4 to uberResponse(4),
+    5 to uberResponse(5),
+)
+
+private fun uberResponse(int: Number): String {
+
+    val uber = StringBuilder()
+
+    (0..2).map {
+        uber.append(responses[int])
+    }
+
+    return uber.toString()
+}

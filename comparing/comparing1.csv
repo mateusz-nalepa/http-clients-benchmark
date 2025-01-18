@@ -1,7 +1,0 @@
--DisUseDedicatedThreadsPerClient=true
--DinneWatkiNaResponseEncode=false
--DmemoryAllocatorType=pooled
--DmockServerPort=8091
--Dserver.port=8081
--Xms1024m
--Xmx1024m
