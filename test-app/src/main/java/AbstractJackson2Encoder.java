@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import io.micrometer.core.instrument.Metrics;
-import org.apache.hc.client5.http.impl.nio.NalepaLogger;
+import com.mateusznalepa.http.clients.util.logger.CustomLogger;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -277,7 +277,7 @@ public abstract class AbstractJackson2Encoder extends Jackson2CodecSupport imple
             }
 
             byte[] bytes = byteBuilder.toByteArray();
-            NalepaLogger.NALEPA_LOGXDD.error("{}: Alokuje sobie pamiec XD", Thread.currentThread());
+            CustomLogger.NALEPA_LOGXDD.error("{}: Alokuje sobie pamiec XD", Thread.currentThread());
 
             Long startXDDD = System.nanoTime();
 

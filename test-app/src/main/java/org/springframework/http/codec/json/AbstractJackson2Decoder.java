@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.mateusznalepa.http.clients.util.logger.Logeusz;
 import io.micrometer.core.instrument.Metrics;
 import org.reactivestreams.Publisher;
 import org.springframework.core.MethodParameter;
