@@ -1,6 +1,0 @@
-{
-  "thread": "reactor-http-ep",
-  "Option": "EpollWait",
-  "duration_ns": 1283,
-  "result": 1
-}

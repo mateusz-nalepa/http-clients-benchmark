@@ -1,0 +1,49 @@
+#define TARGET_PID 8359
+
+
+tracepoint:sched:sched_switch
+/// pid == TARGET_PID /
+{
+    @start[tid] = nsecs;
+    @proc_name[tid] = comm;
+    @cpu_start[tid] = cpu;
+}
+
+tracepoint:sched:sched_switch
+/// @start[tid] && pid == TARGET_PID /
+{
+    $duration = nsecs - @start[tid];
+    $name = @proc_name[tid];
+
+    //if (@proc_name[tid] == "reactor-http-ep" ) {
+        //printf("{ \"cpu_start\": \"%d\", \"cpu_end\": \"%d\", \"thread\": \"%s\", \"thread_end\": \"%s\", \"Option\": \"sched_sw\", \"duratioNs\": %lld , \"switchPid\": %d }\n", @cpu_start[tid], cpu,  @proc_name[tid], comm, $duration, pid );
+        //printf("{ \"thread\": \"%s\", \"option\": \"sched_switch\", \"duratioNs\": %lld , \"result\": %lld, \"prev\": \"%s\", \"prev_pid\": \"%d\", \"next\": \"%s\", \"next_pid\": \"%d\" }\n", @proc_name[tid] , $duration, $duration, args->prev_comm, args->prev_pid, args->next_comm, args->next_pid);
+         //printf("Task stopped: %s (PID: %d)\n", args->prev_comm, args->prev_pid);
+         //printf("Task started: %s (PID: %d)\n", args->next_comm, args->next_pid);
+        @time_thread_switch = hist($duration);
+    //}
+
+ if (args->prev_pid != args->next_pid) {
+    //printf("Switch from PID: %d (%s) to PID: %d (%s)\n", args->prev_pid, args->prev_comm, args->next_pid, args->next_comm);
+ } 
+ // Sprawdź, czy PID-y są takie same else
+ if (args->prev_pid == args->next_pid) {
+    //printf("Thread context switched to na PID: %d (%s)\n", args->prev_pid, args->prev_comm);
+  }
+
+    delete(@start[tid]);
+    delete(@proc_name[tid]);
+}
+
+tracepoint:sched:sched_migrate_task
+{
+    //printf("Thread: %s (PID: %d) migrated from CPU: %d to CPU: %d at a time: %lld ns\n",
+           //args->comm, args->pid, args->orig_cpu, args->dest_cpu, nsecs);
+}
+
+
+
+END {
+    //printf("Time Thread switch\n");
+    //print(@time_thread_switch);
+}

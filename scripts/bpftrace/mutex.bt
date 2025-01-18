@@ -1,0 +1,21 @@
+#define TARGET_PID 19654
+
+kprobe:mutex_lock
+/ pid == TARGET_PID /
+{
+    @start[tid] = nsecs;
+}
+
+kprobe:mutex_unlock
+/ @start[tid] && pid == TARGET_PID /
+{
+    $duration = nsecs - @start[tid];
+    //if (@proc_name[tid] == "AAAAAAAAAAAAAAA" ) {
+             printf("ThreadId: %d, Thread: %s, Duration: %d ns\n",
+                 tid,
+                 comm,
+                 $duration
+             );
+    //}
+    delete(@start[tid]);
+}

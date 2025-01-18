@@ -20,16 +20,16 @@ const char* formattedTime() {
     struct timespec ts;
     struct tm *timeinfo;
 
-    // Pobranie aktualnego czasu
+    // get actual time
     clock_gettime(CLOCK_REALTIME, &ts);
 
-    // Konwersja na czas lokalny
+    // convert to local time
     timeinfo = localtime(&ts.tv_sec);
 
-    // Formatowanie czasu do postaci czytelnej dla człowieka
+    // convert to human readable
     strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
 
-    // Dodanie nanosekund do sformatowanego czasu
+    // convert to formatted time
     snprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), ".%09ld", ts.tv_nsec);
 
     return buffer;
@@ -43,26 +43,26 @@ int main() {
     struct timespec start, end;
     socklen_t addr_len = sizeof(server_addr);
 
-    // Tworzenie gniazda plikowego
+    // create socket
     if ((client_fd = socket(AF_INET, SOCK_DGRAM, 0)) == 0) {
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
 
-    // Ustawienia adresu
+    // set an address
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
     server_addr.sin_port = htons(PORT);
 
-    // Ustawienie gniazda w tryb nieblokujący
+    // set socket in non blocking mode
      //set_nonblocking(client_fd);
 
-    // Mierzenie czasu rozpoczęcia
+    // start measuring time
 
-    // Wysłanie wiadomości do serwera
+    // send message to server
     //sendto(client_fd, buffer, strlen(buffer), 0, (struct sockaddr *)&server_addr, addr_len);
 
-    // Oczekiwanie na odpowiedź w trybie nieblokującym
+    // wait for message in non-blocking mode
     while (1) {
         sendto(client_fd, buffer, strlen(buffer), 0, (struct sockaddr *)&server_addr, addr_len);
 
@@ -75,9 +75,8 @@ int main() {
 
             clock_gettime(CLOCK_MONOTONIC, &end);
 
-//            elapsed_time = (end.tv_sec - start.tv_sec) * 1000.0; // sekundy na milisekundy
-//            elapsed_time = (end.tv_nsec - start.tv_nsec) / 1000000.0; // nanosekundy na milisekundy
-            elapsed_time = (end.tv_nsec - start.tv_nsec);// / 1000000.0; // nanosekundy na milisekundy
+//            elapsed_time = (end.tv_sec - start.tv_sec) * 1000.0; // s na ms
+            elapsed_time = (end.tv_nsec - start.tv_nsec);// / 1000000.0; // ns na ms
 //            printf("Czas odpowiedzi: %.3f ms\n", elapsed_time);
 //            printf("Czas odpowiedzi: %.3f ms\n", elapsed_time);
 
@@ -91,12 +90,12 @@ int main() {
             const char *currentTime = formattedTime();
             if (bytes_received < 0) {
                 printf("%s : %.3f ns No data from server. I wait 1 sec...\n", currentTime, elapsed_time);
-//                printf("Ide spac na 1s...\n");
+//                printf("Go to sleep for 1s...\n");
                 sleep(1); // 10 ms delay to prevent busy-waiting
             }
         }
-            recv_buffer[bytes_received] = '\0'; // Dodanie null-terminatora
-        //    printf("Otrzymano od serwera: %s\n", recv_buffer);
+            recv_buffer[bytes_received] = '\0';
+        //    printf("Got from server: %s\n", recv_buffer);
             const char *currentTime = formattedTime();
 
             printf("%s : %.3f ns Got %d bytes from server\n", currentTime, elapsed_time, bytes_received);
@@ -104,9 +103,9 @@ int main() {
     }
 
 
-//    printf("Czas odpowiedzi: %.3f ms\n", elapsed_time);
+//    printf("Response time: %.3f ms\n", elapsed_time);
 
-    // Zamknięcie gniazda
+    // close socket
     close(client_fd);
     return 0;
 }

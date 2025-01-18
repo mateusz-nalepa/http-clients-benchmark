@@ -1,0 +1,33 @@
+#define TARGET_PID 19654
+
+// END {
+//     @min_duration = (uint64) 2 * 1_000_000;
+//     printf("Tracing java locks");
+// }
+
+ usdt:/home/hodor/.jdks/temurin-21.0.3/lib/server/libjvm.so:monitor__contended__enter
+ //usdt:/home/hodor/.jdks/temurin-21.0.3/lib/server/libjvm.so:monitor__wait
+ / pid == TARGET_PID /
+ {
+     @enter_monitor[tid] = nsecs;
+ }
+
+ usdt:/home/hodor/.jdks/temurin-21.0.3/lib/server/libjvm.so:monitor__contended__entered
+ //usdt:/home/hodor/.jdks/temurin-21.0.3/lib/server/libjvm.so:monitor__notify
+ / pid == TARGET_PID /
+ {
+     $class_name = str(arg2, arg3);
+     $duration = nsecs - @enter_monitor[tid];
+     $end = nsecs;
+     //if ($duration / 1_000_000 >= 1) {
+             printf("Thread: %d, ProcName: %s, Mutex: %d and %s, duration: %d ns\n",
+                 tid,
+                 //arg0,
+                 comm,
+                 arg1,
+                 str(arg2),
+                 //$duration / 1_000_000
+                 $duration
+             );
+     //}
+ }
