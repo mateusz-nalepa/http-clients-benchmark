@@ -45,7 +45,7 @@ class NettyConnectorConfig {
                 }
 
             builder
-//                .option(ChannelOption.ALLOCATOR, clientMemoryAllocator)
+                .option(ChannelOption.ALLOCATOR, clientMemoryAllocator)
         }
 
         when (TestAppConfig.USE_DEDICATED_THREADS_FOR_CLIENT) {
