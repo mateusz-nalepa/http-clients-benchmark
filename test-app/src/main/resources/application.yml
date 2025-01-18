@@ -10,4 +10,3 @@ server:
 logging:
   level:
     io.reactor.netty: TRACE
-    Custom-Logger: OFF

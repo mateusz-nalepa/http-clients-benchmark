@@ -1,9 +1,6 @@
 package com.mateusznalepa.http.clients.client.config.connectors
 
 import com.mateusznalepa.http.clients.TestAppConfig
-import io.netty.buffer.AdaptiveByteBufAllocator
-import io.netty.buffer.PooledByteBufAllocator
-import io.netty.buffer.UnpooledByteBufAllocator
 import io.netty.channel.ChannelOption
 import org.springframework.http.client.ReactorResourceFactory
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
@@ -28,24 +25,10 @@ class NettyConnectorConfig {
                 .metrics(true)
 
         val clientCustomization: (t: HttpClient) -> HttpClient = { client ->
-
-            val builder =
-                client
-                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 500 * 100)
-                    .responseTimeout(Duration.ofMillis(500 * 100))
-                    .followRedirect(false)
-
-
-            val clientMemoryAllocator =
-                when (TestAppConfig.CLIENT_MEMORY_ALLOCATOR_TYPE) {
-                    "pooled" -> AdaptiveByteBufAllocator()
-                    "unpooled" -> UnpooledByteBufAllocator.DEFAULT
-                    "adaptive" -> PooledByteBufAllocator.DEFAULT
-                    else -> throw RuntimeException("not supported allocator type")
-                }
-
-            builder
-                .option(ChannelOption.ALLOCATOR, clientMemoryAllocator)
+            client
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 500 * 100)
+                .responseTimeout(Duration.ofMillis(500 * 100))
+                .followRedirect(false)
         }
 
         when (TestAppConfig.USE_DEDICATED_THREADS_FOR_CLIENT) {

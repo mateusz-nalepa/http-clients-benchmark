@@ -4,6 +4,7 @@ import com.mateusznalepa.http.clients.TestAppConfig
 import com.mateusznalepa.http.clients.client.DummyClient
 import com.mateusznalepa.http.clients.client.MockServerResponse
 import com.mateusznalepa.http.clients.util.customThreadPool.CustomSchedulerCreator
+import com.mateusznalepa.http.clients.util.logger.CustomLoggerWrapper
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
@@ -35,12 +36,22 @@ class TestAppEndpoint(
     fun dummyValue(@PathVariable id: String): Mono<List<MockServerResponse>> =
         Flux
             .fromIterable(dummyClients)
+            .doOnNext { CustomLoggerWrapper.log("Before client") }
             .flatMap { dummyClient ->
                 dummyClient
                     .get(id)
+                    .doOnNext { CustomLoggerWrapper.log("After client") }
             }
             .collectList()
             .publishOnCPUBoundThreads()
+            .doFinally { CustomLoggerWrapper.log("doFinally") }
+
+//    @GetMapping("/dummy/{id}")
+//    fun dummyValue(@PathVariable id: String): Mono<MockServerResponse> =
+//        Mono
+//            .just(MockServerResponse("Asd"))
+//            .doOnNext { CustomLoggerWrapper.log("poczatek")}
+//            .doFinally { CustomLoggerWrapper.log("koniec")}
 
     private fun <T> Flux<T>.publishOnCPUBoundThreads(): Flux<T> {
         if (TestAppConfig.CPU_BOUND_SCHEDULER_ACTIVE) {
