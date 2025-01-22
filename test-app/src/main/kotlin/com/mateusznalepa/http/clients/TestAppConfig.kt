@@ -1,6 +1,7 @@
 package com.mateusznalepa.http.clients
 
 object TestAppConfig {
+    // -Dio.netty.allocator.type=adaptive
     const val CPU_BOUND_SCHEDULER_ACTIVE = true
 
     const val USE_DEDICATED_THREADS_FOR_CLIENT = false
