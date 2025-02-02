@@ -33,7 +33,7 @@ class TestAppEndpoint(
 
 
     @GetMapping("/dummy/{id}")
-    fun dummyValue(@PathVariable id: String): Mono<List<MockServerResponse>> =
+    fun dummyValueWithId(@PathVariable id: String): Mono<List<MockServerResponse>> =
         Flux
             .fromIterable(dummyClients)
             .doOnNext { CustomLoggerWrapper.log("Before client") }
@@ -46,12 +46,12 @@ class TestAppEndpoint(
             .publishOnCPUBoundThreads()
             .doFinally { CustomLoggerWrapper.log("doFinally") }
 
-//    @GetMapping("/dummy/{id}")
-//    fun dummyValue(@PathVariable id: String): Mono<MockServerResponse> =
-//        Mono
-//            .just(MockServerResponse("Asd"))
-//            .doOnNext { CustomLoggerWrapper.log("poczatek")}
-//            .doFinally { CustomLoggerWrapper.log("koniec")}
+    @GetMapping("/dummy")
+    fun dummyValue(): Mono<MockServerResponse> =
+        Mono
+            .just(MockServerResponse("Asd"))
+            .doOnNext { CustomLoggerWrapper.log("poczatek")}
+            .doFinally { CustomLoggerWrapper.log("koniec")}
 
     private fun <T> Flux<T>.publishOnCPUBoundThreads(): Flux<T> {
         if (TestAppConfig.CPU_BOUND_SCHEDULER_ACTIVE) {

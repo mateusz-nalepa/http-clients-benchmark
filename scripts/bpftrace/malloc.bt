@@ -1,0 +1,62 @@
+#define TARGET_PID 69517
+
+// 18-19 dla netty
+
+BEGIN {
+     printf("Mallocs and Frees...\n");
+}
+
+// na starcie netty sobie bardzo duzo alokuje pamieci, undertow w sumie tez xd
+
+
+// tracepoint:syscalls:sys_enter_mmap
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:malloc
+/ pid == TARGET_PID /
+{
+
+    // undertow
+    if (comm != "C2 CompilerThre" && comm != "C1 CompilerThre" && comm != "VM Thread" && comm != "VM Periodic Tas") {
+        printf("malloc on thread: %s \n", comm);
+        @mallocs[comm] = count();
+    }
+}
+
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:free
+/ pid == TARGET_PID /
+{
+    // undertow
+    if (comm != "C2 CompilerThre" && comm != "C1 CompilerThre" && comm != "VM Thread" && comm != "VM Periodic Tas") {
+        printf("free on thread: %s \n", comm);
+        @frees[comm] = count();
+    }
+}
+
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:calloc
+/ pid == TARGET_PID /
+{
+    // undertow
+    if (comm != "C2 CompilerThre" && comm != "C1 CompilerThre" && comm != "VM Thread" && comm != "VM Periodic Tas") {
+        printf("calloc on thread: %s \n", comm);
+        @callocs[comm] = count();
+    }
+}
+
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:realloc
+/ pid == TARGET_PID /
+{
+    // undertow
+    if (comm != "C2 CompilerThre" && comm != "C1 CompilerThre" && comm != "VM Thread" && comm != "VM Periodic Tas") {
+        printf("realloc on thread: %s \n", comm);
+        @reallocs[comm] = count();
+    }
+}
+
+uprobe:/lib/x86_64-linux-gnu/libc.so.6:reallocarray
+/ pid == TARGET_PID /
+{
+    // undertow
+    if (comm != "C2 CompilerThre" && comm != "C1 CompilerThre" && comm != "VM Thread" && comm != "VM Periodic Tas") {
+        printf("reallocarray on thread: %s \n", comm);
+        @reallocarrays[comm] = count();
+    }
+}
