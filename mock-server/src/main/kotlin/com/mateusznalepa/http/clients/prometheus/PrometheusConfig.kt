@@ -1,4 +1,4 @@
-package com.mateusznalepa.http.clients.config
+package com.mateusznalepa.http.clients.prometheus
 
 import io.micrometer.core.instrument.Meter.Id
 import io.micrometer.core.instrument.config.MeterFilter
