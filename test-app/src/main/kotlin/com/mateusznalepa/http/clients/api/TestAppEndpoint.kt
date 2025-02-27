@@ -21,14 +21,7 @@ class TestAppEndpoint(
 
     private val cpuBoundSchedulerOrNull: Scheduler? =
         if (TestAppConfig.CPU_BOUND_SCHEDULER_ACTIVE) {
-//            val bounded = Schedulers.boundedElastic()
-//            Schedulers.addExecutorServiceDecorator("asd") { a, b ->
-//                TimedScheduledExecutorService(b)
-//            }
-//            bounded
-//            Schedulers.parallel()
             customSchedulerCreator.create(Runtime.getRuntime().availableProcessors())
-//            Schedulers.boundedElastic()
         } else null
 
 
@@ -40,6 +33,7 @@ class TestAppEndpoint(
             .flatMap { dummyClient ->
                 dummyClient
                     .get(id)
+//                    .publishOnCPUBoundThreads()
                     .doOnNext { CustomLoggerWrapper.log("After client") }
             }
             .collectList()
